@@ -39,7 +39,7 @@ gn_spec_fitted <- as.data.table(
   lapply(
     c(-delta_shift, 0, delta_shift, 2 * delta_shift),
     function(delta) {
-      SuperNOVA:::shift_additive(a = A, delta = delta, lower_bound = -Inf, upper_bound = Inf)
+      InterXshift:::shift_additive(a = A, delta = delta, lower_bound = -Inf, upper_bound = Inf)
     }
   )
 )

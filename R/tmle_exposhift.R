@@ -101,7 +101,7 @@ tmle_exposhift <- function(data_internal,
 
 
   # S3-ify and return output object
-  class(exposure_shift_out) <- "SuperNOVA"
+  class(exposure_shift_out) <- "InterXshift"
   return(exposure_shift_out)
 }
 

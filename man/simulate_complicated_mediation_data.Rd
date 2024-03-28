@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_complicated_mediation_data.R
 \name{simulate_complicated_mediation_data}
 \alias{simulate_complicated_mediation_data}
-\title{DGP for testing SuperNOVA with mediation (complicated!)}
+\title{DGP for testing InterXshift with mediation (complicated!)}
 \usage{
 simulate_complicated_mediation_data(n_obs = 1e+05, delta = 1)
 }
@@ -15,5 +15,5 @@ simulate_complicated_mediation_data(n_obs = 1e+05, delta = 1)
 A data frame of simulated mediation data
 }
 \description{
-DGP for testing SuperNOVA with mediation (complicated!)
+DGP for testing InterXshift with mediation (complicated!)
 }

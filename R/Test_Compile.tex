@@ -185,7 +185,7 @@ interest we use targeted minimum loss based estimation (TMLE).
 \hypertarget{method-overview}{%
 \subsubsection{Method Overview}\label{method-overview}}
 
-This vignette provides explanation for the package \texttt{SuperNOVA}
+This vignette provides explanation for the package \texttt{InterXshift}
 which first builds a discrete Super Learner with a library of algorithms
 that are basis function selectors Using the best estimator from this
 algorithm (algorithm with the lowers cross-validated MSE) do ANOVA style
@@ -205,7 +205,7 @@ Firts, let's load the packages we'll use and set a seed for simulation:
 \FunctionTok{library}\NormalTok{(devtools)}
 \FunctionTok{library}\NormalTok{(kableExtra)}
 \FunctionTok{load\_all}\NormalTok{()}
-\FunctionTok{library}\NormalTok{(SuperNOVA)}
+\FunctionTok{library}\NormalTok{(InterXshift)}
 
 \FunctionTok{set.seed}\NormalTok{(}\DecValTok{429151}\NormalTok{)}
 \end{Highlighting}
@@ -284,9 +284,9 @@ causal effect may be evaluated.
 \subsubsection{Data-Adaptive Target Parameter: Effect
 Modification}\label{data-adaptive-target-parameter-effect-modification}}
 
-For example, in \texttt{SuperNOVA} time ordering is used to determine
+For example, in \texttt{InterXshift} time ordering is used to determine
 our causal parameters of interest. That is, the analyst passes a vector
-\(V\) of baseline covariates \(W\) to \texttt{SuperNOVA} that may be
+\(V\) of baseline covariates \(W\) to \texttt{InterXshift} that may be
 effect modifiers of any mixture variable in the vector \(A\). Here, the
 target causal parameter is effect modification of the shift parameter
 because \(V\) is measured before \(A\) in our NPSEM. The effect
@@ -331,7 +331,7 @@ defined
 
 where \(0 \leq \delta \leq u(w)\) is an arbitrary pre-specified value
 that defines the degree to which the observed value \(A\) is to be
-shifted, where possible. In \texttt{SuperNOVA} there are four different
+shifted, where possible. In \texttt{InterXshift} there are four different
 shift parameters depending on what is found in the data-adaptive ANOVA
 within the cross-validated fold - these are discussed below.
 
@@ -350,7 +350,7 @@ in a similar fashion as coefficients in a regression model.
 \hypertarget{types-of-shifts}{%
 \subsubsection{Types of Shifts}\label{types-of-shifts}}
 
-This \texttt{SuperNOVA} package examines the effects attributable to:
+This \texttt{InterXshift} package examines the effects attributable to:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -369,7 +369,7 @@ This \texttt{SuperNOVA} package examines the effects attributable to:
   scalar \(\delta\) within strata of an effect modifier.
 \end{enumerate}
 
-The \texttt{SuperNOVA} package implements algorithms to data-adaptively
+The \texttt{InterXshift} package implements algorithms to data-adaptively
 identify mixture variables \(A\) and effect modifiers \(V\) that are
 associated with an outcome and for these variable sets compute one-step
 or targeted minimum loss-based (TML) estimates of the counterfactual
@@ -379,7 +379,7 @@ means changes induced by a shifting function \(\delta(A,W)\).
 \subsection{Data-Adative Variable Set
 Selection}\label{data-adative-variable-set-selection}}
 
-SuperNOVA first fits an unrestricted Super Learner for
+InterXshift first fits an unrestricted Super Learner for
 \(E(Y|W) = h_1(W)\), where \(W\) is a set of baseline covariates that
 the analyst wants to control for, that is, baseline covariates with no
 suspected effect modification with exposures \(A\). Residuals are
@@ -393,7 +393,7 @@ decompositions by testing the null that some set of coefficient values
 variable, or represent two-way basis functions). We can then aggregate
 partial F-statistics for the basis functions up to the variable level
 for variable/interaction importance measures. Algorithms used in
-\texttt{SuperNOVA} return tensor products of arbitrary order and include
+\texttt{InterXshift} return tensor products of arbitrary order and include
 \texttt{earth}, \texttt{polySpline} and \texttt{hal9001}.
 
 \hypertarget{basis-functions}{%
@@ -409,14 +409,14 @@ specific value. Thus, a function of our outcome is written as:
 and \(s\) denotes indices of subsets of the \(W\) (e.g., both functions
 of single variables and two variables).The placement of knot-points for
 every potential value is not feasible in most real-world scenarios and
-therefore \texttt{SuperNOVA} chooses the best estimator from a class of
+therefore \texttt{InterXshift} chooses the best estimator from a class of
 basis algorithms. This approximates the exhaustive function.
 
 \hypertarget{defining-important-basis-functions}{%
 \subsubsection{Defining Important Basis
 Functions}\label{defining-important-basis-functions}}
 
-The user can pass into \texttt{SuperNOVA} the parameter
+The user can pass into \texttt{InterXshift} the parameter
 \texttt{quantile\_thresh} which designates the F-statistic threshold by
 which basis functions are kept. For example, if the user uses
 \texttt{quantile\_thresh\ =\ 0.25} and the resulting vector is
@@ -435,7 +435,7 @@ these paramters.
 \subsection{Target Parameter:
 Interaction}\label{target-parameter-interaction}}
 
-Once \texttt{SuperNOVA} has identified interacting variables with the
+Once \texttt{InterXshift} has identified interacting variables with the
 highest partial F-statistic from the basis functions we need to get
 statistical estimation for how these interactions affect our outcome of
 interest.
@@ -649,7 +649,7 @@ the respective estimation sample data \(P_{n,v}\).
 \hypertarget{application}{%
 \subsection{Application:}\label{application}}
 
-Below we show implementation of \texttt{SuperNOVA} using simulated data.
+Below we show implementation of \texttt{InterXshift} using simulated data.
 Because estimates are given for each data-adaptively identified
 parameter for each fold, after the demonstration we also show our pooled
 estimate approach for parameters that are found across all the folds.
@@ -659,12 +659,12 @@ modification.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{data\_info }\OtherTok{\textless{}{-}}\NormalTok{ SuperNOVA}\SpecialCharTok{::}\FunctionTok{simulate\_data}\NormalTok{()}
+\NormalTok{data\_info }\OtherTok{\textless{}{-}}\NormalTok{ InterXshift}\SpecialCharTok{::}\FunctionTok{simulate\_data}\NormalTok{()}
 \NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ data\_info}\SpecialCharTok{$}\NormalTok{data}
 \end{Highlighting}
 \end{Shaded}
 
-Partition the data into nodes that will be passed to \texttt{SuperNOVA}
+Partition the data into nodes that will be passed to \texttt{InterXshift}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -750,7 +750,7 @@ nuisance parameters
 \end{Highlighting}
 \end{Shaded}
 
-Run the \texttt{SuperNOVA} main function passing in the data, number of
+Run the \texttt{InterXshift} main function passing in the data, number of
 folds, limit of detection censoring, delta to shift by, type of
 estimator and fluctuation, stacks of SL estimators for each nuisance
 parameter, quantile to threshold basis functions and whether to parallel
@@ -758,7 +758,7 @@ process.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{sim\_results }\OtherTok{\textless{}{-}}\NormalTok{ SuperNOVA}\SpecialCharTok{::}\FunctionTok{SuperNOVA}\NormalTok{(}\AttributeTok{W =}\NormalTok{ W,}
+\NormalTok{sim\_results }\OtherTok{\textless{}{-}}\NormalTok{ InterXshift}\SpecialCharTok{::}\FunctionTok{InterXshift}\NormalTok{(}\AttributeTok{W =}\NormalTok{ W,}
                          \AttributeTok{V =}\NormalTok{ V,}
                          \AttributeTok{A =}\NormalTok{ A,}
                          \AttributeTok{Y =}\NormalTok{ Y,}
@@ -790,7 +790,7 @@ process.
 \subsection{Pooling Estimates Found Across the
 Folds}\label{pooling-estimates-found-across-the-folds}}
 
-Because \texttt{SuperNOVA} gets the TMLE updated shift parameter for
+Because \texttt{InterXshift} gets the TMLE updated shift parameter for
 each condition (individual, effect modification or joint), for each
 fold, when many folds are used the resulting tables can be very large.
 For estimates that are found across all folds (are consistently found in
@@ -823,7 +823,7 @@ reciprocal of the sum of the weights, or
 \(v. = \frac{1}{\sum_{i=1}^K w_i}\) and likewise the standard error is
 \(\sqrt{v.}\). Pooled confidence intervals and p-values are calculated
 in the normal way based on the calculated \(\hat{\psi}\) and \(v.\).
-Below we show the results tables output by the \texttt{SuperNOVA} for
+Below we show the results tables output by the \texttt{InterXshift} for
 each parameter for each fold then we show output from the
 \texttt{compute\_meta\_results} function which calculates the pooled
 esimtates and creates plots.
@@ -834,7 +834,7 @@ Shifts}\label{results-individual-stochastic-shifts}}
 
 The expected outcome for individual stochastic shifting of
 data-adaptively identified exposures in a mixture is given in
-\texttt{Indiv\ Shift\ Results} from the \texttt{SuperNOVA} fit object.
+\texttt{Indiv\ Shift\ Results} from the \texttt{InterXshift} fit object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -851,7 +851,7 @@ data-adaptively identified exposures in a mixture is given in
 The expected outcome for individual stochastic shifting of
 data-adaptively identified exposure in a mixture through strata of a
 data-adaptively identified effect modifier is given
-in\texttt{Effect\ Mod\ Results} from the \texttt{SuperNOVA} fit object.
+in\texttt{Effect\ Mod\ Results} from the \texttt{InterXshift} fit object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -865,7 +865,7 @@ in\texttt{Effect\ Mod\ Results} from the \texttt{SuperNOVA} fit object.
 
 The expected outcome for joint stochastic shifting of data-adaptively
 identified set of exposures in a mixture is given
-in\texttt{Effect\ Mod\ Results} from the \texttt{SuperNOVA} fit object.
+in\texttt{Effect\ Mod\ Results} from the \texttt{InterXshift} fit object.
 
 \begin{Shaded}
 \begin{Highlighting}[]

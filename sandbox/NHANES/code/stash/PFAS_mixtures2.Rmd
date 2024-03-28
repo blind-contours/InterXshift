@@ -100,7 +100,7 @@ names(mbv_immunity_data_array) <- c('2001-2002', '2003-2004' )
 
 df_list <- c(mbv_immunity_data_array)
 
-path <- "/Users/davidmccoy/SuperNOVA/sandbox/NHANES/input/"
+path <- "/Users/davidmccoy/InterXshift/sandbox/NHANES/input/"
 ```
 
 ```{r generate_nhanes_functions}

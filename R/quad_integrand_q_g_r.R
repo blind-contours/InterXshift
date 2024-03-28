@@ -1,6 +1,6 @@
-#' Integrand Function for Q, g, r Model Adaptive Quadrature Double Integration in SuperNOVA
+#' Integrand Function for Q, g, r Model Adaptive Quadrature Double Integration in InterXshift
 #'
-#' Computes the integrand for adaptive quadrature double integration in SuperNOVA by combining the models for outcome given mediator and exposure (q_model), the density of the mediator given exposure and covariates (r_model), and the density of the exposure given covariates (g_model).
+#' Computes the integrand for adaptive quadrature double integration in InterXshift by combining the models for outcome given mediator and exposure (q_model), the density of the mediator given exposure and covariates (r_model), and the density of the exposure given covariates (g_model).
 #'
 #' @param a Numeric matrix, grid points for the exposure.
 #' @param z Numeric matrix, grid points for the mediator.

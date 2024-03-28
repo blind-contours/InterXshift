@@ -2,7 +2,7 @@
 % Please edit documentation in R/mc_integrand_q_g_r.R
 \name{mc_integrand_q_g_r}
 \alias{mc_integrand_q_g_r}
-\title{Compute the Monte Carlo integrand for double integration in SuperNOVA}
+\title{Compute the Monte Carlo integrand for double integration in InterXshift}
 \usage{
 mc_integrand_q_g_r(
   sample_a,
@@ -51,7 +51,7 @@ mc_integrand_q_g_r(
 A numeric vector representing the Monte Carlo integrand values for the given sample points.
 }
 \description{
-This function computes the Monte Carlo integrand for double integration in the SuperNOVA package.
+This function computes the Monte Carlo integrand for double integration in the InterXshift package.
 It combines the models for the outcome given mediator and exposure (q_model),
 the density of the mediator given exposure and covariates (r_model),
 and the density of the exposure given covariates (g_model).

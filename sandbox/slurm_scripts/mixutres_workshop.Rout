@@ -15,10 +15,10 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> library(SuperNOVA)
+> library(InterXshift)
 > library(readr)
 > library(here)
-here() starts at /global/scratch/users/david_mccoy/SuperNOVA
+here() starts at /global/scratch/users/david_mccoy/InterXshift
 > 
 > NIEHS_2019 <- read_csv(here("sandbox/NHANES/input/NIEHS_2019.csv"))
 Rows: 1330 Columns: 33
@@ -90,7 +90,7 @@ i Specify the column types or set `show_col_types = FALSE` to quiet this message
 > y <- NIEHS_2019$TELOMEAN
 > 
 > 
-> nhanes_results <- SuperNOVA(
+> nhanes_results <- InterXshift(
 +   w = w,
 +   a = a,
 +   y = y,
@@ -153,6 +153,6 @@ solnp--> Completed in 2 iterations
 Error in (function (.x, .f, ..., .progress = FALSE)  : i In index: 1.
 Caused by error in `table(em_split_data$ind)[[2]]`:
 ! subscript out of bounds
-Calls: SuperNOVA ... resolve.list -> signalConditionsASAP -> signalConditions
+Calls: InterXshift ... resolve.list -> signalConditionsASAP -> signalConditions
 In addition: There were 50 or more warnings (use warnings() to see the first 50)
 Execution halted

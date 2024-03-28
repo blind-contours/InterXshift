@@ -17,7 +17,7 @@ Type 'q()' to quit R.
 
 > # packages
 > library(here)
-here() starts at /global/scratch/users/david_mccoy/SuperNOVA
+here() starts at /global/scratch/users/david_mccoy/InterXshift
 > library(devtools)
 Loading required package: usethis
 > library(dplyr)
@@ -36,9 +36,9 @@ The following objects are masked from 'package:base':
 > library(stringr)
 > source(here("sandbox/02_fit_estimators.R"))
 > load_all()
-i Loading SuperNOVA
+i Loading InterXshift
 Warning message:
-replacing previous import 'pracma::cross' by 'purrr::cross' when loading 'SuperNOVA' 
+replacing previous import 'pracma::cross' by 'purrr::cross' when loading 'InterXshift' 
 > 
 > # simulation parameters
 > n_sim <- 10 # number of simulations
@@ -7650,7 +7650,7 @@ There were 50 or more warnings (use warnings() to see the first 50)
 > # save results to file
 > saveRDS(
 +   object = sim_results_df,
-+   file = here("sandbox/data", paste0("SuperNOVA_", "mediation_cont_mc_9", ".rds"))
++   file = here("sandbox/data", paste0("InterXshift_", "mediation_cont_mc_9", ".rds"))
 + )
 > 
 > proc.time()

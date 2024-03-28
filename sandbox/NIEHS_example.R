@@ -8,7 +8,7 @@ y <- data$Y
 deltas <- list("X1" = 0.5, "X2" = 0.5, "X3" = 0.5, "X4" = 0.5,
                "X5" = 0.5, "X6" = 0.5, "X7" = 0.5)
 
-sim_results <- SuperNOVA(
+sim_results <- InterXshift(
   w = w,
   a = a,
   y = y,

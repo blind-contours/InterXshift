@@ -1,6 +1,6 @@
 #!/bin/bash
 # Job name:
-#SBATCH --job-name=iter4_supernova
+#SBATCH --job-name=iter4_InterXshift
 #
 # Partition:
 #SBATCH --partition=savio2
@@ -22,4 +22,4 @@
 module load r/4.0.3
 
 ### Run Simulation
-R CMD BATCH --no-save ../03_run_simulation_4.R iter_4_supernova.Rout
+R CMD BATCH --no-save ../03_run_simulation_4.R iter_4_InterXshift.Rout

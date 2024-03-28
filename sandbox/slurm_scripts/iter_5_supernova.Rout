@@ -17,7 +17,7 @@ Type 'q()' to quit R.
 
 > # packages
 > library(here)
-here() starts at /global/scratch/users/david_mccoy/SuperNOVA
+here() starts at /global/scratch/users/david_mccoy/InterXshift
 > library(devtools)
 Loading required package: usethis
 > library(dplyr)
@@ -35,7 +35,7 @@ The following objects are masked from 'package:base':
 > library(magrittr)
 > library(stringr)
 > source(here("sandbox/02_fit_estimators.R"))
-> library(SuperNOVA)
+> library(InterXshift)
 > 
 > # simulation parameters
 > n_sim <- 10 # number of simulations
@@ -5708,7 +5708,7 @@ solnp--> Completed in 2 iterations
 > # save results to file
 > saveRDS(
 +   object = sim_results_df,
-+   file = here("sandbox/data", paste0("SuperNOVA_", "5_sim", ".rds"))
++   file = here("sandbox/data", paste0("InterXshift_", "5_sim", ".rds"))
 + )
 > 
 > proc.time()

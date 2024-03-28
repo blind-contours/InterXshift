@@ -2,7 +2,7 @@
 % Please edit documentation in R/quad_integrand_q_g_r.R
 \name{quad_integrand_q_g_r}
 \alias{quad_integrand_q_g_r}
-\title{Integrand Function for Q, g, r Model Adaptive Quadrature Double Integration in SuperNOVA}
+\title{Integrand Function for Q, g, r Model Adaptive Quadrature Double Integration in InterXshift}
 \usage{
 quad_integrand_q_g_r(
   a,
@@ -51,5 +51,5 @@ quad_integrand_q_g_r(
 Numeric matrix, the computed values of the integrand.
 }
 \description{
-Computes the integrand for adaptive quadrature double integration in SuperNOVA by combining the models for outcome given mediator and exposure (q_model), the density of the mediator given exposure and covariates (r_model), and the density of the exposure given covariates (g_model).
+Computes the integrand for adaptive quadrature double integration in InterXshift by combining the models for outcome given mediator and exposure (q_model), the density of the mediator given exposure and covariates (r_model), and the density of the exposure given covariates (g_model).
 }

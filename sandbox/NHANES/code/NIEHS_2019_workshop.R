@@ -79,7 +79,7 @@ nhanes_results <- InterXshift(
 
 saveRDS(
   object = nhanes_results,
-  file = here("sandbox/NHANES/output", paste0("SuperNOVA_", "nhanes_prime", ".rds"))
+  file = here("sandbox/NHANES/output", paste0("InterXshift_", "nhanes_prime", ".rds"))
 )
 
 

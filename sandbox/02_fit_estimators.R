@@ -10,7 +10,7 @@ fit_estimators <- function(w,
                            cv_folds,
                            var_sets){
 
-  sim_results <- SuperNOVA(
+  sim_results <- InterXshift(
     w = w,
     a = a,
     y = y,
@@ -144,7 +144,7 @@ fit_estimators_mediation <- function(w,
                                      n_bins,
                                      use_multinomial){
 
-  sim_results <- SuperNOVA(
+  sim_results <- InterXshift(
     w = w,
     a = a,
     z = z,
@@ -268,7 +268,7 @@ fit_estimators_mediation_complicated <- function(w,
                                      n_bins,
                                      use_multinomial){
 
-  sim_results <- SuperNOVA(
+  sim_results <- InterXshift(
     w = w,
     a = a,
     z = z,

@@ -28,12 +28,14 @@ Imports:
     rlang,
     sl3,
     stringr,
-    partykit,
     furrr,
     purrr,
     polspline,
-    pracma,
-    haldensify
+    earth,
+    ranger,
+    arm,
+    xgboost, 
+    nnls
 Suggests: 
     rmarkdown,
     knitr,

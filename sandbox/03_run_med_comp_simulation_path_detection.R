@@ -49,7 +49,7 @@ for (sample_size in n_obs) {
     z <- data_sim[, mediators]
     y <- data_sim[, outcome]
 
-    sim_results <- SuperNOVA(
+    sim_results <- InterXshift(
       w = w,
       a = a,
       z = z,
@@ -87,5 +87,5 @@ avg_freq_df <- sim_results_df %>%
 # save results to file
 saveRDS(
   object = avg_freq_df,
-  file = here("sandbox/data", paste0("SuperNOVA_", "mediation_quant_1", ".rds"))
+  file = here("sandbox/data", paste0("InterXshift_", "mediation_quant_1", ".rds"))
 )

@@ -52,7 +52,7 @@ regression for the observed data (at A) and under the counterfactual shift
 \examples{
 \dontrun{
 # Load required libraries
-library(SuperNOVA)
+library(InterXshift)
 library(sl3)
 
 # Create example data

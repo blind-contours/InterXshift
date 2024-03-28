@@ -1,5 +1,5 @@
 #' @title Create default Super Learner estimators for the data adaptive
-#' and nuisance parameters used in `SuperNOVA`
+#' and nuisance parameters used in `InterXshift`
 #' @description If Super Learners are not passed to the stack arguments
 #' this function is used to create some default ensemble machine
 #' learning estimators for each parameter. The default estimators are

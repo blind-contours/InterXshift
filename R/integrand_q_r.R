@@ -1,6 +1,6 @@
-#' Integrand Function for Mediation Analysis in SuperNOVA: Works for both Adaptive Quadrature and MC Methods for Integration
+#' Integrand Function for Mediation Analysis in InterXshift: Works for both Adaptive Quadrature and MC Methods for Integration
 #'
-#' Computes the integrand for mediation analysis in SuperNOVA by combining the models for outcome given mediator and exposure (q_model), and the density of the mediator given exposure and covariates (r_model).
+#' Computes the integrand for mediation analysis in InterXshift by combining the models for outcome given mediator and exposure (q_model), and the density of the mediator given exposure and covariates (r_model).
 #'
 #' @param z Numeric vector, grid points for the mediator.
 #' @param row_data Data frame, containing the data for a single observation.

@@ -1,6 +1,6 @@
-#' Compute the Monte Carlo integrand for double integration in SuperNOVA
+#' Compute the Monte Carlo integrand for double integration in InterXshift
 #'
-#' This function computes the Monte Carlo integrand for double integration in the SuperNOVA package.
+#' This function computes the Monte Carlo integrand for double integration in the InterXshift package.
 #' It combines the models for the outcome given mediator and exposure (q_model),
 #' the density of the mediator given exposure and covariates (r_model),
 #' and the density of the exposure given covariates (g_model).

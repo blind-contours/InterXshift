@@ -87,7 +87,7 @@ than hn_trunc_thresh (default: FALSE).}
 multiple mediators (optional).}
 }
 \value{
-An S3 object of class \code{SuperNOVA} containing the results of the
+An S3 object of class \code{InterXshift} containing the results of the
 procedure to compute a TML or one-step estimate of the counterfactual mean
 under a modified treatment policy that shifts a continuous-valued exposure
 by a scalar amount \code{delta}. These exposures are data-adaptively

@@ -2,7 +2,7 @@
 % Please edit documentation in R/integrand_q_r.R
 \name{integrand_q_r}
 \alias{integrand_q_r}
-\title{Integrand Function for Mediation Analysis in SuperNOVA: Works for both Adaptive Quadrature and MC Methods for Integration}
+\title{Integrand Function for Mediation Analysis in InterXshift: Works for both Adaptive Quadrature and MC Methods for Integration}
 \usage{
 integrand_q_r(
   z,
@@ -45,5 +45,5 @@ integrand_q_r(
 Numeric vector, the computed values of the integrand.
 }
 \description{
-Computes the integrand for mediation analysis in SuperNOVA by combining the models for outcome given mediator and exposure (q_model), and the density of the mediator given exposure and covariates (r_model).
+Computes the integrand for mediation analysis in InterXshift by combining the models for outcome given mediator and exposure (q_model), and the density of the mediator given exposure and covariates (r_model).
 }

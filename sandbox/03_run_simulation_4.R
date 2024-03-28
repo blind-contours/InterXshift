@@ -5,7 +5,7 @@ library(dplyr)
 library(magrittr)
 library(stringr)
 source(here("sandbox/02_fit_estimators.R"))
-library(SuperNOVA)
+library(InterXshift)
 
 # simulation parameters
 n_sim <- 10 # number of simulations
@@ -78,5 +78,5 @@ for (sample_size in n_obs) {
 # save results to file
 saveRDS(
   object = sim_results_df,
-  file = here("sandbox/data", paste0("SuperNOVA_", "7_sim", ".rds"))
+  file = here("sandbox/data", paste0("InterXshift_", "7_sim", ".rds"))
 )

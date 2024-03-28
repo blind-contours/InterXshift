@@ -1,4 +1,4 @@
-#' DGP for testing SuperNOVA without mediation
+#' DGP for testing InterXshift without mediation
 #'
 #' @param n_obs Number of observations
 #' @param sigma_mod Sigma matrix of exposures

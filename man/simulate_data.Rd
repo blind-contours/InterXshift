@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_data.R
 \name{simulate_data}
 \alias{simulate_data}
-\title{DGP for testing SuperNOVA without mediation}
+\title{DGP for testing InterXshift without mediation}
 \usage{
 simulate_data(
   n_obs = 1e+05,
@@ -22,5 +22,5 @@ exposure to shift}
 A dataframe of simulated data
 }
 \description{
-DGP for testing SuperNOVA without mediation
+DGP for testing InterXshift without mediation
 }

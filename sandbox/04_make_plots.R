@@ -7,85 +7,85 @@ library(hrbrthemes)
 
 ## simulation results under discrete exposure
 # quant_sim_results_1 <- readRDS(
-#   here("sandbox/data/SuperNOVA_mediation_quant_1.rds")
+#   here("sandbox/data/InterXshift_mediation_quant_1.rds")
 # )
 
 quant_sim_results_2 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_2.rds")
+  here("sandbox/data/InterXshift_mediation_quant_2.rds")
 )
 
 quant_sim_results_3 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_3.rds")
+  here("sandbox/data/InterXshift_mediation_quant_3.rds")
 )
 #
 quant_sim_results_4 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_4.rds")
+  here("sandbox/data/InterXshift_mediation_quant_4.rds")
 )
 
 quant_sim_results_5 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_5.rds")
+  here("sandbox/data/InterXshift_mediation_quant_5.rds")
 )
 
 quant_sim_results_6 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_6.rds")
+  here("sandbox/data/InterXshift_mediation_quant_6.rds")
 )
 
 quant_sim_results_7 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_7.rds")
+  here("sandbox/data/InterXshift_mediation_quant_7.rds")
 )
 
 quant_sim_results_8 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_8.rds")
+  here("sandbox/data/InterXshift_mediation_quant_8.rds")
 )
 
 quant_sim_results_9 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_9.rds")
+  here("sandbox/data/InterXshift_mediation_quant_9.rds")
 )
 
 quant_sim_results_10 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_quant_10.rds")
+  here("sandbox/data/InterXshift_mediation_quant_10.rds")
 )
 
 ## simulation results under continuous exposure using MC integration
 
 cont_sim_mc_results_1 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_1.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_1.rds")
 )
 
 cont_sim_mc_results_2 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_2.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_2.rds")
 )
 
 cont_sim_mc_results_3 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_3.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_3.rds")
 )
 #
 cont_sim_mc_results_4 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_4.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_4.rds")
 )
 
 cont_sim_mc_results_5 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_5.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_5.rds")
 )
 
 cont_sim_mc_results_6 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_6.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_6.rds")
 )
 
 cont_sim_mc_results_7 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_7.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_7.rds")
 )
 
 cont_sim_mc_results_8 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_8.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_8.rds")
 )
 
 cont_sim_mc_results_9 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_9.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_9.rds")
 )
 
 cont_sim_mc_results_10 <- readRDS(
-  here("sandbox/data/SuperNOVA_mediation_cont_mc_10.rds")
+  here("sandbox/data/InterXshift_mediation_cont_mc_10.rds")
 )
 
 

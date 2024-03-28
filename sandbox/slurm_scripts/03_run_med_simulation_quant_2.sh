@@ -1,6 +1,6 @@
 #!/bin/bash
 # Job name:
-#SBATCH --job-name=2q_mediation_supernova
+#SBATCH --job-name=2q_mediation_InterXshift
 #
 # Partition:
 #SBATCH --partition=savio2
@@ -22,4 +22,4 @@
 module load r/4.0.3
 
 ### Run Simulation
-R CMD BATCH --no-save ../03_run_med_simulation_quant_2.R supernova_mediation_quant_2.Rout
+R CMD BATCH --no-save ../03_run_med_simulation_quant_2.R InterXshift_mediation_quant_2.Rout
