@@ -69,7 +69,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="rinterxshift-">R/<code>InterXShift</code> <img src="reference/figures/%E2%80%8EInterXshift.%E2%80%8E001.png" align="right" height="200" style="float:right; height:200px;"><a class="anchor" aria-label="anchor" href="#rinterxshift-"></a>
+<div class="page-header"><h1 id="rinterxshift-">R/<code>InterXShift</code> <img src="reference/figures/InterXshift_logo.png" style="float:right; height:200px;"><a class="anchor" aria-label="anchor" href="#rinterxshift-"></a>
 </h1></div>
 <!-- badges: start -->
 
@@ -94,28 +94,19 @@
 <p><em>Note:</em> Because the <code>InterXshift</code> package (currently) depends on <code>sl3</code> that allows ensemble machine learning to be used for nuisance parameter estimation and <code>sl3</code> is not on CRAN the <code>InterXshift</code> package is not available on CRAN and must be downloaded here.</p>
 <p>There are many depedencies for <code>InterXshift</code> so it’s easier to break up installation of the various packages to ensure proper installation.</p>
 <p>First install the basis estimators used in the data-adaptive variable discovery of the exposure and covariate space:</p>
+<p><code>InterXshift</code> uses the <code>sl3</code> package to build ensemble machine learners for each nuisance parameter.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"earth"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"hal9001"</span><span class="op">)</span></span></code></pre></div>
-<p><code>InterXshift</code> uses the <code>sl3</code> package to build ensemble machine learners for each nuisance parameter. We have to install off the development branch, first download these two packages for <code>sl3</code></p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ranger"</span>, <span class="st">"arm"</span>, <span class="st">"xgboost"</span>, <span class="st">"nnls"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Now install <code>sl3</code> on devel:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"tlverse/sl3@devel"</span><span class="op">)</span></span></code></pre></div>
 <p>Make sure <code>sl3</code> installs correctly then install <code>InterXshift</code></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"blind-contours/InterXshift@main"</span><span class="op">)</span></span></code></pre></div>
-<p><code>InterXshift</code> has some other miscellaneous dependencies that are used in the examples as well as in the plotting functions.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"kableExtra"</span>, <span class="st">"hrbrthemes"</span>, <span class="st">"viridis"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>To illustrate how <code>InterXshift</code> may be used to ascertain the effect of a mixed exposure, consider the following example:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">InterXshift</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: usethis</span></span>
@@ -125,9 +116,9 @@
 <span><span class="va">seed</span> <span class="op">&lt;-</span> <span class="fl">429153</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">seed</span><span class="op">)</span></span></code></pre></div>
 <p>We will directly use synthetic data from the NIEHS used to test new mixture methods. This data has built in strong positive and negative marginal effects and certain interactions. Found here: <a href="https://github.com/niehs-prime/2015-NIEHS-MIxtures-Workshop" class="external-link uri">https://github.com/niehs-prime/2015-NIEHS-MIxtures-Workshop</a></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NIEHS_data_1"</span>, package <span class="op">=</span> <span class="st">"InterXshift"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NIEHS_data_1</span><span class="op">$</span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">NIEHS_data_1</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="va">w</span> <span class="op">&lt;-</span> <span class="va">NIEHS_data_1</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"W"</span>, <span class="st">"Z"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">NIEHS_data_1</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"X3"</span>, <span class="st">"X4"</span>, <span class="st">"X5"</span>, <span class="st">"X6"</span>, <span class="st">"X7"</span><span class="op">)</span><span class="op">]</span></span>
@@ -393,7 +384,7 @@ W
 </tbody>
 </table>
 <p>Based on the data key, we expect X1 to have the strongest positive effect, X5 the strongest negative. So we would expect these to take the top ranks for these marginal associations. For interactions we expect to find interactions built into the data if there is enough observations in the region. The github page gives details on the types of interactions built into this synthetic data.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">ptm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/proc.time.html" class="external-link">proc.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">sim_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/InterXshift.html">InterXshift</a></span><span class="op">(</span></span>
@@ -605,7 +596,7 @@ W
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/proc.time.html" class="external-link">proc.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">ptm</span></span>
 <span><span class="co">#&gt;     user   system  elapsed </span></span>
-<span><span class="co">#&gt;   82.902    4.349 1455.498</span></span>
+<span><span class="co">#&gt;   67.194    3.702 1277.583</span></span>
 <span></span>
 <span><span class="co">## marginal effects</span></span>
 <span><span class="va">top_positive_effects</span> <span class="op">&lt;-</span> <span class="va">sim_results</span><span class="op">$</span><span class="va">`Pos Shift Results by Rank`</span></span>
@@ -617,7 +608,7 @@ W
 <span></span>
 <span><span class="va">k_fold_synergy_effects</span> <span class="op">&lt;-</span> <span class="va">sim_results</span><span class="op">$</span><span class="va">`K Fold Synergy Results`</span></span>
 <span><span class="va">k_fold_antagonism_effects</span> <span class="op">&lt;-</span> <span class="va">sim_results</span><span class="op">$</span><span class="va">`K Fold Antagonism Results`</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top_positive_effects</span><span class="op">$</span><span class="va">`Rank 1`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Rank 1 Positive Stochastic Intervention Results"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_classic.html" class="external-link">kable_classic</a></span><span class="op">(</span>full_width <span class="op">=</span> <span class="cn">F</span>, html_font <span class="op">=</span> <span class="st">"Cambria"</span><span class="op">)</span></span></code></pre></div>
@@ -820,7 +811,7 @@ Rank 1
 </table>
 <p>Above we show the findings for the top rank positive marginal effect. Here we consistently find X1 which is true based on what is built into the DGP. The pooled estimate is pooling the findings for the top ranked positive result found across the folds which is all X1 in this case.</p>
 <p>Next we look at the top negative result:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top_negative_effects</span><span class="op">$</span><span class="va">`Rank 2`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Rank 1 Negative Stochastic Intervention Results"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_classic.html" class="external-link">kable_classic</a></span><span class="op">(</span>full_width <span class="op">=</span> <span class="cn">F</span>, html_font <span class="op">=</span> <span class="st">"Cambria"</span><span class="op">)</span></span></code></pre></div>
@@ -1023,7 +1014,7 @@ Rank 2
 </table>
 <p>Here we consistently see X5 as having the strongest negative impact which is also true compared to the true DGP.</p>
 <p>Next we will look at the top synergy results which is defined as the exposures that when shifted jointly have the highest, most positive, expected outcome difference compared to the sum of individual shifts of the same variables.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pooled_synergy_effects</span><span class="op">$</span><span class="va">`Rank 1`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Rank 1 Synergy Stochastic Intervention Results"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_classic.html" class="external-link">kable_classic</a></span><span class="op">(</span>full_width <span class="op">=</span> <span class="cn">F</span>, html_font <span class="op">=</span> <span class="st">"Cambria"</span><span class="op">)</span></span></code></pre></div>
@@ -1225,7 +1216,7 @@ Interaction
 </tbody>
 </table>
 <p>Above this table shows the pooled results for the rank 1 synergy exposure interaction. Of course, the exposure sets in the interaction deemed to have the highest impact, synergy, may differ between the folds and thus this pooling may be over different exposure sets. Thus, the first line shows the pooled estimate for a shift in the first variable, the second line the second variable, third line the joint and fourth line the difference between the joint and sum of the first two lines, or the interaction effect. Therefore, in this case, we could be pooling over different variables because of inconcistency in what is included as rank 1 between the folds. Next we look at the k-fold specific results.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">k_fold_synergy_effects</span><span class="op">$</span><span class="va">`Rank 1`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"K-fold Synergy Stochastic Intervention Results"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_classic.html" class="external-link">kable_classic</a></span><span class="op">(</span>full_width <span class="op">=</span> <span class="cn">F</span>, html_font <span class="op">=</span> <span class="st">"Cambria"</span><span class="op">)</span></span></code></pre></div>
@@ -1732,7 +1723,7 @@ Interaction
 </table>
 <p>Here we see that the interaction between X4 and X5 was consistently found to have the highest synergistic interaction across the folds. Therefore, for our pooled parameter var 1 represents the pooled effects of shifting X4, var 2 represents the pooled effects of shifting X5, joint is X4 and X5 together and the interaction represents the interaction effect for these two variables.</p>
 <p>Next we’ll look at the k-fold antagonistic interactions:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">k_fold_antagonism_effects</span><span class="op">$</span><span class="va">`Rank 1`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"K-fold Antagonistic Stochastic Intervention Results"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_classic.html" class="external-link">kable_classic</a></span><span class="op">(</span>full_width <span class="op">=</span> <span class="cn">F</span>, html_font <span class="op">=</span> <span class="st">"Cambria"</span><span class="op">)</span></span></code></pre></div>
@@ -2238,7 +2229,7 @@ Interaction
 </tbody>
 </table>
 <p>Here, we see that in all the folds the X1-X7 has the strongest antagonistic relationship. X1-X7 was found in all the folds and therefore the oracle parameter is interpreted the same as we found in the synergy results. Which is here:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pooled_antagonism_effects</span><span class="op">$</span><span class="va">`Rank 1`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Rank 1 Antagonism Stochastic Intervention Results"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_classic.html" class="external-link">kable_classic</a></span><span class="op">(</span>full_width <span class="op">=</span> <span class="cn">F</span>, html_font <span class="op">=</span> <span class="st">"Cambria"</span><span class="op">)</span></span></code></pre></div>
@@ -2483,23 +2474,23 @@ Interaction
 </h2>
 <p>© 2020-2022 <a href="https://davidmccoy.org" class="external-link">David B. McCoy</a></p>
 <p>The contents of this repository are distributed under the MIT license. See below for details:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>MIT License</span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="fu">Copyright</span> (c) <span class="dv">2020-2022</span> David B. McCoy</span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>Permission is hereby granted, free of charge, to any person obtaining a copy</span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>of this software and associated documentation <span class="fu">files</span> (the <span class="st">"Software"</span>), to deal</span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="cf">in</span> the Software without restriction, including without limitation the rights</span>
-<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>to use, copy, modify, merge, publish, distribute, sublicense, and<span class="sc">/</span>or sell</span>
-<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>copies of the Software, and to permit persons to whom the Software is</span>
-<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>furnished to do so, subject to the following conditions<span class="sc">:</span></span>
-<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>The above copyright notice and this permission notice shall be included <span class="cf">in</span> all</span>
-<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>copies or substantial portions of the Software.</span>
-<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>THE SOFTWARE IS PROVIDED <span class="st">"AS IS"</span>, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
-<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
-<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
-<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
-<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
-<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
-<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>SOFTWARE.</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>MIT License</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">Copyright</span> (c) <span class="dv">2020-2022</span> David B. McCoy</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>of this software and associated documentation <span class="fu">files</span> (the <span class="st">"Software"</span>), to deal</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="cf">in</span> the Software without restriction, including without limitation the rights</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>to use, copy, modify, merge, publish, distribute, sublicense, and<span class="sc">/</span>or sell</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>copies of the Software, and to permit persons to whom the Software is</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>furnished to do so, subject to the following conditions<span class="sc">:</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>The above copyright notice and this permission notice shall be included <span class="cf">in</span> all</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>copies or substantial portions of the Software.</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>THE SOFTWARE IS PROVIDED <span class="st">"AS IS"</span>, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a>AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a>OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a>SOFTWARE.</span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">

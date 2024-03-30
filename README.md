@@ -99,20 +99,8 @@ installation of the various packages to ensure proper installation.
 First install the basis estimators used in the data-adaptive variable
 discovery of the exposure and covariate space:
 
-``` r
-install.packages("earth")
-install.packages("hal9001")
-```
-
 `InterXshift` uses the `sl3` package to build ensemble machine learners
-for each nuisance parameter. We have to install off the development
-branch, first download these two packages for `sl3`
-
-``` r
-install.packages(c("ranger", "arm", "xgboost", "nnls"))
-```
-
-Now install `sl3` on devel:
+for each nuisance parameter.
 
 ``` r
 remotes::install_github("tlverse/sl3@devel")
@@ -122,13 +110,6 @@ Make sure `sl3` installs correctly then install `InterXshift`
 
 ``` r
 remotes::install_github("blind-contours/InterXshift@main")
-```
-
-`InterXshift` has some other miscellaneous dependencies that are used in
-the examples as well as in the plotting functions.
-
-``` r
-install.packages(c("kableExtra", "hrbrthemes", "viridis"))
 ```
 
 ------------------------------------------------------------------------
@@ -647,7 +628,7 @@ sim_results <- InterXshift(
 #> solnp--> Completed in 2 iterations
 proc.time() - ptm
 #>     user   system  elapsed 
-#>   73.058    3.708 1327.367
+#>   67.194    3.702 1277.583
 
 ## marginal effects
 top_positive_effects <- sim_results$`Pos Shift Results by Rank`
