@@ -173,9 +173,9 @@ exposures_to_keep <- setdiff(exposures, exposures_to_remove)
 ```
 
 
-## Run CVtreeMLE 
+## Run InterXshift 
 
-```{r run CVtreeMLE for NHANES, warning=FALSE, message=FALSE}
+```{r run InterXshift for NHANES, warning=FALSE, message=FALSE}
 deltas <- list(
   "LBX074LA" = 1, "LBX099LA" = 1, "LBXD03LA" = 1,
   "LBXD05LA" = 1, "LBXF03LA" = 1, "LBXF04LA" = 1, "LBXF08LA" = 1, 
