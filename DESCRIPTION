@@ -31,11 +31,8 @@ Imports:
     furrr,
     purrr,
     polspline,
-    earth,
     ranger,
-    arm,
-    xgboost, 
-    nnls
+
 Suggests: 
     rmarkdown,
     knitr,

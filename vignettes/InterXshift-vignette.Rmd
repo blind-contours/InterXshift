@@ -97,8 +97,6 @@ we want to find the region that, if we created a regulation on those chemicals, 
 
 Let's first load the data and investigate the variables: 
 
-## NHANES Data 
-
 
 ```{r NHANES data and variables}
 data("NHANES_eurocim")

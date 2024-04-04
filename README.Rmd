@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# R/`InterXShift` <img src="man/figures/InterXshift_logo.png" style="float:right; height:200px;">
+# R/`InterXShift`
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/blind-contours/InterXShift/workflows/R-CMD-check/badge.svg)](https://github.com/blind-contours/InterXShift/actions)
@@ -35,6 +35,10 @@ __Authors:__ [David McCoy](https://davidmccoy.org)
 ---
 
 ## What's `InterXshift`?
+
+<img src="https://github.com/blind-contours/InterXshift/blob/main/InterXshift_logo.png" width="230">
+
+
 
 The `InterXshift` R package offers an approach which identifies and estimates the impact interactions in a mixed exposure on an outcome. We define interaction as the counterfactual mean of the outcome under stochastic interventions of two exposures compared to the additive counterfactual mean of the two expowures intervened on indepdentently. These interventions or exposure changes depend on naturally observed values, as described in past literature [@diaz2012population; @haneuse2013estimation].
 
@@ -114,8 +118,10 @@ head(NIEHS_data_1) %>%
   kable_classic(full_width = F, html_font = "Cambria")
 ```
 
+<img src="https://github.com/blind-contours/InterXshift/blob/main/man/figures/NIEHS_interactions.png" width="230">
 
-Based on the data key, we expect X1 to have the strongest positive effect, X5 the strongest negative. So we would expect these to take the top ranks for these marginal associations. For interactions we expect to find interactions built into the data if there is enough observations in the region. The github page gives details on the types of interactions built into this synthetic data. 
+
+Based on the data key, we expect X1 to have the strongest positive effect, X5 the strongest negative. So we would expect these to take the top ranks for these marginal associations. For interactions we expect to find interactions built into the data that are antagonistic and synergistic. The github page gives details on the types of interactions built into this synthetic data. The above image shows the interaction types that we might expect to find.
 
 
 ```{r run InterXshift, eval = TRUE, message=FALSE, warning=FALSE}
@@ -268,8 +274,8 @@ After using the `InterXshift` R package, please cite the following:
 
 ## Funding
 
-The development of this software was supported in part through grants from the
-
+The development of this software was supported in part through 
+NIH grant P42ES004705 from NIEHS
 
 ---
 
