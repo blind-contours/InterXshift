@@ -14,10 +14,6 @@ joint_stoch_shift_est_g_exp(
   at,
   adaptive_delta,
   hn_trunc_thresh,
-  use_multinomial,
-  density_type,
-  max_degree,
-  n_bins,
   outcome_type
 )
 }
@@ -42,15 +38,6 @@ determined from the clever covariate being below the hn_trunc_thresh level}
 
 \item{hn_trunc_thresh}{Truncation level of the clever covariate used in the
 adaptive delta method}
-
-\item{use_multinomial}{TRUE/FALSE for using multinomial for discretized exposure}
-
-\item{density_type}{Type of density estimator used}
-
-\item{max_degree}{Max degree of interaction used in the haldensify fit,
-if used.}
-
-\item{n_bins}{Number of bins to discretize outcome for haldensify if used.}
 
 \item{outcome_type}{Type of outcome variable}
 }

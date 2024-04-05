@@ -19,16 +19,9 @@
 #' determined from the clever covariate being below the hn_trunc_thresh level
 #' @param hn_trunc_thresh Truncation level of the clever covariate used in the
 #' adaptive delta method
-#' @param max_degree Max degree of interaction used in the haldensify fit,
-#' if used.
-#' @param n_bins Number of bins to discretize outcome for haldensify if used.
 #' @param outcome_type Type of outcome variable
-#' @param use_multinomial TRUE/FALSE for using multinomial for discretized exposure
-#' @param density_type Type of density estimator used
-#'
 #' @importFrom data.table as.data.table setnames set copy
 #' @importFrom stats predict
-#' @importFrom haldensify haldensify
 #' @importFrom assertthat assert_that
 #'
 #' @export
@@ -46,10 +39,6 @@ joint_stoch_shift_est_g_exp <- function(exposures,
                                         at,
                                         adaptive_delta,
                                         hn_trunc_thresh,
-                                        use_multinomial,
-                                        density_type,
-                                        max_degree,
-                                        n_bins,
                                         outcome_type) {
   future::plan(future::sequential, gc = TRUE)
 
@@ -98,127 +87,80 @@ joint_stoch_shift_est_g_exp <- function(exposures,
     at_upupshifted <- create_shifted_data(at, exposure, 2 * delta, lower_bound, upper_bound)
 
 
-    if (density_type == "sl") {
-      sl_task <- sl3::sl3_Task$new(
-        data = at,
-        outcome = exposure,
-        covariates = covars,
-        outcome_type = outcome_type
-      )
+    sl_task <- sl3::sl3_Task$new(
+      data = at,
+      outcome = exposure,
+      covariates = covars,
+      outcome_type = outcome_type
+    )
 
-      sl_task_noshift_at <- sl3::sl3_Task$new(
-        data = at,
-        outcome = exposure,
-        covariates = covars
-      )
+    sl_task_noshift_at <- sl3::sl3_Task$new(
+      data = at,
+      outcome = exposure,
+      covariates = covars
+    )
 
-      sl_task_noshift_av <- sl3::sl3_Task$new(
-        data = av,
-        outcome = exposure,
-        covariates = covars
-      )
+    sl_task_noshift_av <- sl3::sl3_Task$new(
+      data = av,
+      outcome = exposure,
+      covariates = covars
+    )
 
-      # sl3 task for data with exposure shifted DOWNWARDS A-delta
-      sl_task_downshifted_at <- sl3::sl3_Task$new(
-        data = at_downshifted,
-        outcome = exposure,
-        covariates = covars
-      )
+    # sl3 task for data with exposure shifted DOWNWARDS A-delta
+    sl_task_downshifted_at <- sl3::sl3_Task$new(
+      data = at_downshifted,
+      outcome = exposure,
+      covariates = covars
+    )
 
-      sl_task_downshifted_av <- sl3::sl3_Task$new(
-        data = av_downshifted,
-        outcome = exposure,
-        covariates = covars
-      )
+    sl_task_downshifted_av <- sl3::sl3_Task$new(
+      data = av_downshifted,
+      outcome = exposure,
+      covariates = covars
+    )
 
-      # sl3 task for data with exposure shifted UPWARDS A+delta
-      sl_task_upshifted_at <- sl3::sl3_Task$new(
-        data = at_upshifted,
-        outcome = exposure,
-        covariates = covars
-      )
+    # sl3 task for data with exposure shifted UPWARDS A+delta
+    sl_task_upshifted_at <- sl3::sl3_Task$new(
+      data = at_upshifted,
+      outcome = exposure,
+      covariates = covars
+    )
 
-      sl_task_upshifted_av <- sl3::sl3_Task$new(
-        data = av_upshifted,
-        outcome = exposure,
-        covariates = covars
-      )
+    sl_task_upshifted_av <- sl3::sl3_Task$new(
+      data = av_upshifted,
+      outcome = exposure,
+      covariates = covars
+    )
 
-      # sl3 task for data with exposure shifted UPWARDS A+2delta
-      sl_task_upupshifted_at <- sl3::sl3_Task$new(
-        data = at_upupshifted,
-        outcome = exposure,
-        covariates = covars
-      )
+    # sl3 task for data with exposure shifted UPWARDS A+2delta
+    sl_task_upupshifted_at <- sl3::sl3_Task$new(
+      data = at_upupshifted,
+      outcome = exposure,
+      covariates = covars
+    )
 
-      sl_task_upupshifted_av <- sl3::sl3_Task$new(
-        data = av_upupshifted,
-        outcome = exposure,
-        covariates = covars
-      )
+    sl_task_upupshifted_av <- sl3::sl3_Task$new(
+      data = av_upupshifted,
+      outcome = exposure,
+      covariates = covars
+    )
 
-      g_model <- suppressWarnings(suppressMessages(g_learner$train(sl_task)))
+    g_model <- suppressWarnings(suppressMessages(g_learner$train(sl_task)))
 
-      # at predictions -----------
-      pred_g_exp_noshift_at <- g_model$predict(sl_task_noshift_at)
-      pred_g_exp_downshifted_at <- g_model$predict(sl_task_downshifted_at)
-      pred_g_exp_upshifted_at <- g_model$predict(sl_task_upshifted_at)
-      pred_g_exp_upupshifted_at <- g_model$predict(sl_task_upupshifted_at)
+    # at predictions -----------
+    pred_g_exp_noshift_at <- g_model$predict(sl_task_noshift_at)
+    pred_g_exp_downshifted_at <- g_model$predict(sl_task_downshifted_at)
+    pred_g_exp_upshifted_at <- g_model$predict(sl_task_upshifted_at)
+    pred_g_exp_upupshifted_at <- g_model$predict(sl_task_upupshifted_at)
 
-      # av predictions -----------
+    # av predictions -----------
 
-      pred_g_exp_noshift_av <- g_model$predict(sl_task_noshift_av)
-      pred_g_exp_downshifted_av <- g_model$predict(sl_task_downshifted_av)
-      pred_g_exp_upshifted_av <- g_model$predict(sl_task_upshifted_av)
-      pred_g_exp_upupshifted_av <- g_model$predict(sl_task_upupshifted_av)
-
-      if (use_multinomial == TRUE) {
-        get_value_from_column <- function(a, row_quantile_predictions, lower_bound = lower_bound, upper_bound = upper_bound) {
-          a <- ifelse(a < lower_bound, lower_bound, a)
-          a <- ifelse(a > upper_bound, upper_bound, a)
-          row_quantile_predictions[[a]]
-        }
-        pred_g_exp_noshift_at <- mapply(get_value_from_column, a = at$a, row_quantile_predictions = unlist(pred_g_exp_noshift_at, recursive = FALSE), lower_bound = lower_bound, upper_bound = upper_bound)
-        pred_g_exp_downshifted_at <- mapply(get_value_from_column, a = at$a - delta, row_quantile_predictions = unlist(pred_g_exp_downshifted_at, recursive = FALSE), lower_bound = lower_bound, upper_bound = upper_bound)
-        pred_g_exp_upshifted_at <- mapply(get_value_from_column, a = at$a + delta, row_quantile_predictions = unlist(pred_g_exp_upshifted_at, recursive = FALSE), lower_bound = lower_bound, upper_bound = upper_bound)
-        pred_g_exp_upupshifted_at <- mapply(get_value_from_column, a = at$a + 2 * delta, row_quantile_predictions = unlist(pred_g_exp_upupshifted_at, recursive = FALSE), lower_bound = lower_bound, upper_bound = upper_bound)
-
-        pred_g_exp_noshift_av <- mapply(get_value_from_column, a = av$a, row_quantile_predictions = unlist(pred_g_exp_noshift_av, recursive = FALSE), lower_bound = lower_bound, upper_bound = upper_bound)
-        pred_g_exp_downshifted_av <- mapply(get_value_from_column, a = av$a - delta, row_quantile_predictions = unlist(pred_g_exp_downshifted_av, recursive = FALSE), lower_bound = lower_bound, upper_bound = upper_bound)
-        pred_g_exp_upshifted_av <- mapply(get_value_from_column, a = av$a + delta, row_quantile_predictions = unlist(pred_g_exp_upshifted_av, recursive = FALSE), lower_bound = lower_bound, upper_bound = upper_bound)
-        pred_g_exp_upupshifted_av <- mapply(get_value_from_column, a = av$a + 2 * delta, row_quantile_predictions = unlist(pred_g_exp_upupshifted_av, recursive = FALSE), lower_bound = lower_bound, upper_bound = upper_bound)
-      }
-    } else {
-      at <- as.data.frame(at)
-      at_upshifted <- as.data.frame(at_upshifted)
-      at_upupshifted <- as.data.frame(at_upupshifted)
-      at_downshifted <- as.data.frame(at_downshifted)
-
-      av <- as.data.frame(av)
-      av_upshifted <- as.data.frame(av_upshifted)
-      av_upupshifted <- as.data.frame(av_upupshifted)
-      av_downshifted <- as.data.frame(av_downshifted)
+    pred_g_exp_noshift_av <- g_model$predict(sl_task_noshift_av)
+    pred_g_exp_downshifted_av <- g_model$predict(sl_task_downshifted_av)
+    pred_g_exp_upshifted_av <- g_model$predict(sl_task_upshifted_av)
+    pred_g_exp_upupshifted_av <- g_model$predict(sl_task_upupshifted_av)
 
 
-      g_model <- suppressMessages(haldensify(
-        A = at[[exposure]], W = at[covars], n_bins = n_bins, lambda_seq = exp(seq(-1, -10, length = 100)),
-        # the following arguments are passed to hal9001::fit_hal()
-        max_degree = max_degree
-      ))
-
-      # at predictions -----------
-      pred_g_exp_noshift_at <- predict(g_model, new_A = at[[exposure]], new_W = at[covars])
-      pred_g_exp_downshifted_at <- predict(g_model, new_A = at_downshifted[[exposure]], new_W = at_downshifted[covars])
-      pred_g_exp_upshifted_at <- predict(g_model, new_A = at_upshifted[[exposure]], new_W = at_upshifted[covars])
-      pred_g_exp_upupshifted_at <- predict(g_model, new_A = at_upupshifted[[exposure]], new_W = at_upupshifted[covars])
-
-      # av predictions -----------
-
-      pred_g_exp_noshift_av <- predict(g_model, new_A = av[[exposure]], new_W = av[covars])
-      pred_g_exp_downshifted_av <- predict(g_model, new_A = av_downshifted[[exposure]], new_W = av_downshifted[covars])
-      pred_g_exp_upshifted_av <- predict(g_model, new_A = av_upshifted[[exposure]], new_W = av_upshifted[covars])
-      pred_g_exp_upupshifted_av <- predict(g_model, new_A = av_upupshifted[[exposure]], new_W = av_upupshifted[covars])
-    }
     # create output data.tables
     av_out <- cbind.data.frame(
       pred_g_exp_downshifted_av,

@@ -13,13 +13,9 @@ indiv_stoch_shift_est_g_exp(
   at,
   adaptive_delta,
   hn_trunc_thresh,
-  use_multinomial,
   lower_bound,
   upper_bound,
-  outcome_type,
-  density_type,
-  n_bins,
-  max_degree
+  outcome_type
 )
 }
 \arguments{
@@ -54,8 +50,6 @@ distributions.}
 in the adaptive delta procedure. It represents the minimum proportion of observations in each
 exposure group to be included when adjusting delta.}
 
-\item{use_multinomial}{TRUE/FALSE whether to use multinomial for PMF estimation vs. PDF of exposure}
-
 \item{lower_bound}{A \code{numeric} value specifying the lower bound of the exposure variable
 to prevent shifting past this limit during the GPS estimation.}
 
@@ -65,17 +59,6 @@ to prevent shifting past this limit during the GPS estimation.}
 \item{outcome_type}{A \code{character} specifying whether the outcome is 'categorical' or
 'continuous' based on the discretization of the exposure variable. This information is used
 to determine the appropriate learner type for the GPS model.}
-
-\item{density_type}{A \code{character} specifying the type of density estimator to use for
-GPS estimation. Possible options are 'SL' (Super Learner) or 'HAL' (Highly Adaptive Lasso).}
-
-\item{n_bins}{A \code{numeric} value specifying the number of bins to be used if the exposure
-variable is discretized. This parameter is only applicable when exposure_quantized is \code{TRUE}.}
-
-\item{max_degree}{A \code{numeric} value specifying the maximum degree of
-interactions to be used in the Highly Adaptive Lasso (HAL) if HAL is chosen as the
-density estimator. Higher values will result in a more flexible GPS model, but may
-increase the risk of overfitting.}
 }
 \value{
 A \code{data.table} with four columns, containing estimates of the
