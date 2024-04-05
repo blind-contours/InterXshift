@@ -74,7 +74,7 @@ Data-Adaptive Stochastic Interventions</h1>
                         <h4 data-toc-skip class="author">David
 McCoy</h4>
             
-            <h4 data-toc-skip class="date">2024-03-30</h4>
+            <h4 data-toc-skip class="date">2024-04-04</h4>
       
       
       <div class="hidden name"><code>InterXshift-vignette.Rmd</code></div>
@@ -102,15 +102,22 @@ joint impact of a mixed exposure, i.e. a vector of exposures, but the
 most important exposures and exposure sets remain unknown. Traditional
 methods make overly simplistic assumptions, such as linear and additive
 relationships, and the resulting statistical quantities may not be
-directly applicable to public policy decisions.</p>
+directly applicable to public policy decisions. More flexible methods
+offer dose response relationships but do not result in an easily
+interpretable estimate. Here, we utilize cross-validated targeted
+learning with stochastic shift interventions to identify exposures in a
+mixture that have the strongest positive and negative effect. We also
+define interaction as a comparison of the expected outcome under joint
+shift to additive shifts. With this definition we identify the top
+synergistic and antagonistic relationships and provide efficient
+estimates of stochastic shift interventions.</p>
 </div>
 <div class="section level2">
 <h2 id="target-parameter">Target Parameter<a class="anchor" aria-label="anchor" href="#target-parameter"></a>
 </h2>
-<p>To overcome these limitations, InterXshift uses data-adaptive machine
-learning methods to identify the exposures and exposure sets that have
-the most synergy or antagonism. This is defined based on our target
-parameter:</p>
+<p>InterXshift uses data-adaptive machine learning methods to identify
+the exposures and exposure sets that have the most synergy or
+antagonism. This is defined based on our target parameter:</p>
 <p>$$ <span class="math display">\[\begin{align}
     \Psi_{\text{IE}} = &amp;E[Y | A_i + \delta_i, A_j + \delta_j,
 \mathbf{A}_{- i,j}, W] \nonumber \\
@@ -202,20 +209,12 @@ consistency of findings.</p>
 <div class="section level2">
 <h2 id="nhanes-data">NHANES Data<a class="anchor" aria-label="anchor" href="#nhanes-data"></a>
 </h2>
-<p>Here we will try and replicate the analysis by Gibson et. al., <a href="https://ehjournal.biomedcentral.com/articles/10.1186/s12940-019-0515-1" class="external-link uri">https://ehjournal.biomedcentral.com/articles/10.1186/s12940-019-0515-1</a></p>
+<p>Here we will try and replicate the analysis by Gibson et. al.:</p>
+<p><a href="https://ehjournal.biomedcentral.com/articles/10.1186/s12940-019-0515-1" class="external-link uri">https://ehjournal.biomedcentral.com/articles/10.1186/s12940-019-0515-1</a></p>
 <p>and Mitro et. al, <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4858394/" class="external-link uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4858394/</a></p>
 <p>Who used the NHANES 2001-2002 data to investigate 18 POP exposures on
 telomere length.</p>
-<p>Because reduced telomere length is associated with more biological
-aging and higher morbidity, we will try and identify which region in the
-POP space would maximize telomere length. That is, we want to find the
-region that, if we created a regulation on those chemicals, would result
-in maximal change in elongating telomere length.</p>
 <p>Let’s first load the data and investigate the variables:</p>
-</div>
-<div class="section level2">
-<h2 id="nhanes-data-1">NHANES Data<a class="anchor" aria-label="anchor" href="#nhanes-data-1"></a>
-</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NHANES_eurocim"</span><span class="op">)</span></span>
 <span></span>
@@ -284,7 +283,7 @@ do that here:</p>
 <span><span class="va">exposures_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">exposures</span>, <span class="va">exposures_to_remove</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="run-InterXshift">Run InterXshift<a class="anchor" aria-label="anchor" href="#run-InterXshift"></a>
+<h2 id="run-interxshift">Run InterXshift<a class="anchor" aria-label="anchor" href="#run-interxshift"></a>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">deltas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -304,147 +303,179 @@ do that here:</p>
 <span>  a <span class="op">=</span> <span class="va">a</span>,</span>
 <span>  y <span class="op">=</span> <span class="va">y</span>,</span>
 <span>  deltas <span class="op">=</span> <span class="va">deltas</span>,</span>
-<span>  n_folds <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  n_folds <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  outcome_type <span class="op">=</span> <span class="st">"continuous"</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  parallel_type <span class="op">=</span> <span class="st">"multi_session"</span>,</span>
-<span>  num_cores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  num_cores <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  seed <span class="op">=</span> <span class="va">seed</span>,</span>
 <span>  adaptive_delta <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  top_n <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2183.1772     Pars:  0.31946 0.68054</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2183.1772     Pars:  0.31946 0.68054</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2325.8904     Pars:  0.15996 0.84004</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2325.8904     Pars:  0.15996 0.84004</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2769.0440     Pars:  0.06888 0.93112</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2769.0440     Pars:  0.06888 0.93112</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3165.9080     Pars:  0.06705 0.93295</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3165.9080     Pars:  0.06704 0.93296</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2856.4580     Pars:  0.05372 0.94628</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2856.4580     Pars:  0.05372 0.94628</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2857.9107     Pars:  0.07182 0.92818</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2857.9107     Pars:  0.07182 0.92818</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2970.6409     Pars:  0.03833 0.96167</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2970.6409     Pars:  0.03833 0.96167</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3142.8885     Pars:  0.07186 0.92814</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3142.8885     Pars:  0.07186 0.92814</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2748.0340     Pars:  0.05459 0.94541</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2748.0340     Pars:  0.05459 0.94541</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3046.6289     Pars:  0.05747 0.94253</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3046.6289     Pars:  0.05747 0.94253</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2172.3654     Pars:  0.37975 0.62025</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2172.3654     Pars:  0.37975 0.62025</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2137.4014     Pars:  0.11305 0.88695</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2137.4014     Pars:  0.11305 0.88695</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 1683.2214     Pars:  0.07506 0.92494</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 1683.2214     Pars:  0.07505 0.92495</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2150.0854     Pars:  0.34428 0.65572</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2150.0854     Pars:  0.34428 0.65572</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 1932.9594     Pars:  0.54460 0.45540</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 1932.9594     Pars:  0.54460 0.45540</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1964.8342     Pars:  0.37014 0.62986</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1964.8342     Pars:  0.37014 0.62986</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2151.7601     Pars:  0.32941 0.67059</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2151.7601     Pars:  0.32941 0.67059</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2324.8068     Pars:  0.39370 0.60630</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2324.8068     Pars:  0.39370 0.60630</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2741.5871     Pars:  0.06881 0.93119</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2741.5871     Pars:  0.06881 0.93119</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2760.7986     Pars:  0.57526 0.42474</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2760.7986     Pars:  0.57526 0.42474</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2908.2177     Pars:  0.09181 0.90819</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2908.2177     Pars:  0.09181 0.90819</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3020.5766     Pars:  0.06794 0.93206</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3020.5766     Pars:  0.06794 0.93206</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 3099.0210     Pars:  0.04333 0.95667</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 3099.0210     Pars:  0.04333 0.95667</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2778.2071     Pars:  0.67232 0.32768</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2778.2071     Pars:  0.67232 0.32768</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2998.7982     Pars:  0.08846 0.91154</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2998.7982     Pars:  0.08846 0.91154</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2568.9175     Pars:  0.17363 0.82637</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2568.9175     Pars:  0.17363 0.82637</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2217.6318     Pars:  0.46750 0.53250</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2217.6318     Pars:  0.46750 0.53250</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2274.4333     Pars:  0.20559 0.79441</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2274.4333     Pars:  0.20559 0.79441</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 1562.0790     Pars:  0.04445 0.95555</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 1562.0790     Pars:  0.04445 0.95555</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1602.7867     Pars:  0.07339 0.92661</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1602.7867     Pars:  0.07339 0.92661</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 1055.4302     Pars:  0.04780 0.95220</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 1055.4302     Pars:  0.04780 0.95220</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1228.9266     Pars:  0.04116 0.95884</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1228.9266     Pars:  0.04116 0.95884</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2220.0236     Pars:  0.29714 0.70286</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2220.0236     Pars:  0.29714 0.70286</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2308.6854     Pars:  0.29665 0.70335</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2308.6854     Pars:  0.29666 0.70334</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2660.0510     Pars:  0.55735 0.44265</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2660.0510     Pars:  0.55735 0.44265</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2947.1401     Pars:  0.06799 0.93201</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2947.1401     Pars:  0.06799 0.93201</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2944.5010     Pars:  0.07274 0.92726</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2944.5010     Pars:  0.07274 0.92726</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3160.0092     Pars:  0.05740 0.94260</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3160.0092     Pars:  0.05740 0.94260</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2703.0621     Pars:  0.57641 0.42359</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2703.0621     Pars:  0.57641 0.42359</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3181.2465     Pars:  0.07397 0.92603</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3181.2465     Pars:  0.07397 0.92603</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2433.0573     Pars:  0.20899 0.79101</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2433.0573     Pars:  0.20899 0.79101</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2905.0564     Pars:  0.04282 0.95718</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2905.0564     Pars:  0.04282 0.95718</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2104.3869     Pars:  0.09786 0.90214</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2104.3869     Pars:  0.09786 0.90214</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2224.6723     Pars:  0.08223 0.91777</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2224.6723     Pars:  0.08223 0.91777</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 1405.8030     Pars:  0.05556 0.94444</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 1405.8030     Pars:  0.05557 0.94443</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1629.4414     Pars:  0.05270 0.94730</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1629.4414     Pars:  0.05270 0.94730</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 1539.8037     Pars:  0.10322 0.89678</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 1539.8037     Pars:  0.10323 0.89677</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1980.5925     Pars:  0.31678 0.68322</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1980.5925     Pars:  0.31678 0.68322</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2160.7263     Pars:  0.30691 0.69309</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2160.7263     Pars:  0.30691 0.69309</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1631.8139     Pars:  0.09748 0.90252</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1631.8139     Pars:  0.09748 0.90252</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2819.0429     Pars:  0.08287 0.91713</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2819.0429     Pars:  0.08287 0.91713</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3000.6226     Pars:  0.07931 0.92069</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3000.6226     Pars:  0.07931 0.92069</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2907.5418     Pars:  0.09682 0.90318</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2907.5418     Pars:  0.09682 0.90318</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2868.0589     Pars:  0.06890 0.93110</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2868.0589     Pars:  0.06890 0.93110</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2858.0039     Pars:  0.07378 0.92622</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2858.0039     Pars:  0.07378 0.92622</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2914.1244     Pars:  0.04442 0.95558</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2914.1244     Pars:  0.04441 0.95559</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2815.3270     Pars:  0.05465 0.94535</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2815.3270     Pars:  0.05465 0.94535</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2829.1469     Pars:  0.04008 0.95992</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2829.1469     Pars:  0.04008 0.95992</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 2013.6035     Pars:  0.17616 0.82384</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 2013.6035     Pars:  0.17616 0.82384</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2401.3614     Pars:  0.53997 0.46003</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2401.3614     Pars:  0.53997 0.46003</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 1852.6863     Pars:  0.27285 0.72715</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 1852.6863     Pars:  0.27285 0.72715</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1261.2039     Pars:  0.05576 0.94424</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1261.2039     Pars:  0.05576 0.94424</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Iter: 1 fn: 1913.8901     Pars:  0.72395 0.27605</span></span>
-<span><span class="co">#&gt; Iter: 2 fn: 1913.8901     Pars:  0.72395 0.27605</span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1357.7149     Pars:  0.07634 0.92366</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1357.7149     Pars:  0.07635 0.92365</span></span>
+<span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2282.2687     Pars:  0.22833 0.77167</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2282.2687     Pars:  0.22834 0.77166</span></span>
+<span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3417.7656     Pars:  0.10997 0.89003</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3417.7656     Pars:  0.10996 0.89004</span></span>
+<span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3297.2807     Pars:  0.11893 0.88107</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3297.2807     Pars:  0.11893 0.88107</span></span>
+<span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 3472.6381     Pars:  0.11233 0.88767</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 3472.6381     Pars:  0.11233 0.88767</span></span>
+<span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2853.6616     Pars:  0.04173 0.95827</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2853.6616     Pars:  0.04173 0.95827</span></span>
+<span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2335.5537     Pars:  0.27978 0.72022</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2335.5537     Pars:  0.27977 0.72023</span></span>
+<span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 1892.6252     Pars:  0.25059 0.74941</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 1892.6252     Pars:  0.25059 0.74941</span></span>
+<span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Iter: 1 fn: 2036.2921     Pars:  0.58975 0.41025</span></span>
+<span><span class="co">#&gt; Iter: 2 fn: 2036.2921     Pars:  0.58975 0.41025</span></span>
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/proc.time.html" class="external-link">proc.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">ptm</span></span>
-<span><span class="co">#&gt;     user   system  elapsed </span></span>
-<span><span class="co">#&gt;  521.857  219.422 8464.769</span></span></code></pre></div>
+<span><span class="co">#&gt;      user    system   elapsed </span></span>
+<span><span class="co">#&gt;  1440.082   514.657 17518.854</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="investigating-results">Investigating Results<a class="anchor" aria-label="anchor" href="#investigating-results"></a>
@@ -507,22 +538,22 @@ Delta
 LBXF03LA
 </td>
 <td style="text-align:right;">
-0.0457271
+0.0752633
 </td>
 <td style="text-align:right;">
-0.0001777
+0.0003448
 </td>
 <td style="text-align:right;">
-0.0133306
+0.0185682
 </td>
 <td style="text-align:right;">
-0.0196
+0.0389
 </td>
 <td style="text-align:right;">
-0.0719
+0.1117
 </td>
 <td style="text-align:right;">
-0.0006031
+0.0000505
 </td>
 <td style="text-align:left;">
 1
@@ -534,7 +565,7 @@ Indiv Shift
 LBXF03LA
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -545,22 +576,22 @@ LBXF03LA
 LBXF03LA
 </td>
 <td style="text-align:right;">
-0.0155608
+-0.0063054
 </td>
 <td style="text-align:right;">
-0.0002885
+0.0001419
 </td>
 <td style="text-align:right;">
-0.0169860
+0.0119117
 </td>
 <td style="text-align:right;">
--0.0177
+-0.0297
 </td>
 <td style="text-align:right;">
-0.0489
+0.0170
 </td>
 <td style="text-align:right;">
-0.3596157
+0.5965658
 </td>
 <td style="text-align:left;">
 2
@@ -572,7 +603,7 @@ Indiv Shift
 LBXF03LA
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -583,22 +614,22 @@ LBXF03LA
 LBXF03LA
 </td>
 <td style="text-align:right;">
-0.0092498
+0.0323595
 </td>
 <td style="text-align:right;">
-0.0000971
+0.0001715
 </td>
 <td style="text-align:right;">
-0.0098545
+0.0130950
 </td>
 <td style="text-align:right;">
--0.0101
+0.0067
 </td>
 <td style="text-align:right;">
-0.0286
+0.0580
 </td>
 <td style="text-align:right;">
-0.3479177
+0.0134685
 </td>
 <td style="text-align:left;">
 3
@@ -610,7 +641,45 @@ Indiv Shift
 LBXF03LA
 </td>
 <td style="text-align:right;">
-252
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LBXF04LA
+</td>
+<td style="text-align:right;">
+0.0001602
+</td>
+<td style="text-align:right;">
+0.0000959
+</td>
+<td style="text-align:right;">
+0.0097917
+</td>
+<td style="text-align:right;">
+-0.0190
+</td>
+<td style="text-align:right;">
+0.0194
+</td>
+<td style="text-align:right;">
+0.9869470
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Indiv Shift
+</td>
+<td style="text-align:left;">
+LBXF04LA
+</td>
+<td style="text-align:right;">
+201
 </td>
 <td style="text-align:right;">
 1
@@ -621,25 +690,25 @@ LBXF03LA
 LBXF03LA
 </td>
 <td style="text-align:right;">
-0.0247865
+0.0110933
 </td>
 <td style="text-align:right;">
-0.0001454
+0.0001405
 </td>
 <td style="text-align:right;">
-0.0120576
+0.0118534
 </td>
 <td style="text-align:right;">
-0.0012
+-0.0121
 </td>
 <td style="text-align:right;">
-0.0484
+0.0343
 </td>
 <td style="text-align:right;">
-0.0398135
+0.3493350
 </td>
 <td style="text-align:left;">
-4
+5
 </td>
 <td style="text-align:left;">
 Indiv Shift
@@ -648,7 +717,7 @@ Indiv Shift
 LBXF03LA
 </td>
 <td style="text-align:right;">
-251
+201
 </td>
 <td style="text-align:right;">
 1
@@ -659,22 +728,22 @@ LBXF03LA
 Rank 1
 </td>
 <td style="text-align:right;">
-0.0011646
+0.0002385
 </td>
 <td style="text-align:right;">
-0.0000634
+0.0000644
 </td>
 <td style="text-align:right;">
-0.0079599
+0.0080267
 </td>
 <td style="text-align:right;">
--0.0144
+-0.0155
 </td>
 <td style="text-align:right;">
-0.0168
+0.0160
 </td>
 <td style="text-align:right;">
-0.8836731
+0.9763000
 </td>
 <td style="text-align:left;">
 Pooled TMLE
@@ -698,8 +767,22 @@ Rank 1
 </tr></tbody>
 </table>
 <p>Here we see LBXF03LA is found in all the folds for the top positive
-effects. The pooled effect indicates that for a 1-unit increase telomere
-length increases by 0.008 with p = 0.35.</p>
+effects. Estimates under Psi indicate the change in expected outcome
+under a 1-unit intervention compared to the mean outcome under the
+observed exposure distribution. Fold is the fold number estimates are
+being made for and the last column is the pooled TMLE estimate for all
+of our rank 1 estimates. Variance is estimated from the influence
+function for stochastic shift interventions with subsequent standard
+error and CI estimates.</p>
+<p>N is the number of observations used in the calculation. In the
+pooled results this should be equal to the total sample size. Here,
+because we are interested in positive associations, if the associations
+are significant we expect our Psi estimates to be positive, indicating a
+shift is greater than the observed mean outcome.</p>
+<p>Users here should look for inconsistencies in the exposure that is
+found as the top positive effect. Inconsistencies indicate there is not
+“strong signal” for this estimate and make the pooled rank 1 estimate
+difficult to interpret.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NIEH_results</span><span class="op">$</span><span class="va">`Neg Shift Results by Rank`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Top Negative Effects"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -752,25 +835,25 @@ Delta
 <tbody>
 <tr>
 <td style="text-align:left;">
-LBXD03LA
+LBXD05LA
 </td>
 <td style="text-align:right;">
--0.0775986
+0.0330499
 </td>
 <td style="text-align:right;">
-0.0112880
+0.0003561
 </td>
 <td style="text-align:right;">
-0.1062450
+0.0188693
 </td>
 <td style="text-align:right;">
--0.2858
+-0.0039
 </td>
 <td style="text-align:right;">
-0.1306
+0.0700
 </td>
 <td style="text-align:right;">
-0.4651616
+0.0798577
 </td>
 <td style="text-align:left;">
 1
@@ -779,10 +862,10 @@ LBXD03LA
 Indiv Shift
 </td>
 <td style="text-align:left;">
-LBXD03LA
+LBXD05LA
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -790,25 +873,25 @@ LBXD03LA
 </tr>
 <tr>
 <td style="text-align:left;">
-LBXD03LA
+LBXF08LA
 </td>
 <td style="text-align:right;">
-0.1746807
+-0.0427118
 </td>
 <td style="text-align:right;">
-0.0117635
+0.0001757
 </td>
 <td style="text-align:right;">
-0.1084597
+0.0132536
 </td>
 <td style="text-align:right;">
--0.0379
+-0.0687
 </td>
 <td style="text-align:right;">
-0.3873
+-0.0167
 </td>
 <td style="text-align:right;">
-0.1072759
+0.0012701
 </td>
 <td style="text-align:left;">
 2
@@ -817,10 +900,10 @@ LBXD03LA
 Indiv Shift
 </td>
 <td style="text-align:left;">
-LBXD03LA
+LBXF08LA
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -828,25 +911,25 @@ LBXD03LA
 </tr>
 <tr>
 <td style="text-align:left;">
-LBXF08LA
+LBXD03LA
 </td>
 <td style="text-align:right;">
-0.0366763
+0.0545727
 </td>
 <td style="text-align:right;">
-0.0001580
+0.0001489
 </td>
 <td style="text-align:right;">
-0.0125717
+0.0122022
 </td>
 <td style="text-align:right;">
-0.0120
+0.0307
 </td>
 <td style="text-align:right;">
-0.0613
+0.0785
 </td>
 <td style="text-align:right;">
-0.0035299
+0.0000077
 </td>
 <td style="text-align:left;">
 3
@@ -855,10 +938,10 @@ LBXF08LA
 Indiv Shift
 </td>
 <td style="text-align:left;">
-LBXF08LA
+LBXD03LA
 </td>
 <td style="text-align:right;">
-252
+201
 </td>
 <td style="text-align:right;">
 1
@@ -869,22 +952,22 @@ LBXF08LA
 LBXD03LA
 </td>
 <td style="text-align:right;">
--0.0121677
+0.2675288
 </td>
 <td style="text-align:right;">
-0.0003782
+0.0327868
 </td>
 <td style="text-align:right;">
-0.0194467
+0.1810712
 </td>
 <td style="text-align:right;">
--0.0503
+-0.0874
 </td>
 <td style="text-align:right;">
-0.0259
+0.6224
 </td>
 <td style="text-align:right;">
-0.5315176
+0.1395475
 </td>
 <td style="text-align:left;">
 4
@@ -896,7 +979,45 @@ Indiv Shift
 LBXD03LA
 </td>
 <td style="text-align:right;">
-251
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LBXD03LA
+</td>
+<td style="text-align:right;">
+0.0439702
+</td>
+<td style="text-align:right;">
+0.0002065
+</td>
+<td style="text-align:right;">
+0.0143718
+</td>
+<td style="text-align:right;">
+0.0158
+</td>
+<td style="text-align:right;">
+0.0721
+</td>
+<td style="text-align:right;">
+0.0022173
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Indiv Shift
+</td>
+<td style="text-align:left;">
+LBXD03LA
+</td>
+<td style="text-align:right;">
+201
 </td>
 <td style="text-align:right;">
 1
@@ -907,22 +1028,22 @@ LBXD03LA
 Rank 1
 </td>
 <td style="text-align:right;">
-0.0724647
+0.0466035
 </td>
 <td style="text-align:right;">
-0.0040673
+0.0015466
 </td>
 <td style="text-align:right;">
-0.0637756
+0.0393273
 </td>
 <td style="text-align:right;">
--0.0525
+-0.0305
 </td>
 <td style="text-align:right;">
-0.1975
+0.1237
 </td>
 <td style="text-align:right;">
-0.2558538
+0.2360108
 </td>
 <td style="text-align:left;">
 Pooled TMLE
@@ -945,10 +1066,11 @@ Rank 1
 </td>
 </tr></tbody>
 </table>
-<p>Here we see some inconsistency in the top negative result with 2
-folds finding LBXD03LA and one fold LBXF08LA. This makes interpreting
-the pooled estimate difficult. Again more folds fixes this issue.
-However, the analyst can interpret the k-fold specific results.</p>
+<p>Here is the same type of table but for the top negative results.
+Output is in the same format as above for the positive results. If the
+Psi estimates are significant, we expect these effects to be negative.
+Indicating the shift by 1 unit reduces the expected outcome compared to
+the observed mean.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">k_fold_synergy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">NIEH_results</span><span class="op">$</span><span class="va">`K Fold Synergy Results`</span><span class="op">)</span></span>
 <span></span>
@@ -1008,28 +1130,28 @@ Rank 1.1
 1
 </td>
 <td style="text-align:right;">
-0.0235943
+-0.0739546
 </td>
 <td style="text-align:right;">
-0.0000971
+0.0026787
 </td>
 <td style="text-align:right;">
-0.0098518
+0.0517558
 </td>
 <td style="text-align:right;">
-0.0043
+-0.1754
 </td>
 <td style="text-align:right;">
-0.0429
+0.0275
 </td>
 <td style="text-align:right;">
-0.8121049
+0.7451230
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1049,28 +1171,28 @@ Rank 1.2
 1
 </td>
 <td style="text-align:right;">
-0.0131089
+-0.0845122
 </td>
 <td style="text-align:right;">
-0.0000824
+0.0067418
 </td>
 <td style="text-align:right;">
-0.0090783
+0.0821086
 </td>
 <td style="text-align:right;">
--0.0047
+-0.2454
 </td>
 <td style="text-align:right;">
-0.0309
+0.0764
 </td>
 <td style="text-align:right;">
-0.8905704
+0.7680443
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1090,28 +1212,28 @@ Rank 1.3
 1
 </td>
 <td style="text-align:right;">
--0.0928390
+0.0101848
 </td>
 <td style="text-align:right;">
-0.0089170
+0.0000861
 </td>
 <td style="text-align:right;">
-0.0944300
+0.0092778
 </td>
 <td style="text-align:right;">
--0.2779
+-0.0080
 </td>
 <td style="text-align:right;">
-0.0922
+0.0284
 </td>
 <td style="text-align:right;">
-0.7625628
+0.9157903
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1131,28 +1253,28 @@ Rank 1.4
 1
 </td>
 <td style="text-align:right;">
--0.1295422
+0.1686516
 </td>
 <td style="text-align:right;">
-0.0097293
+0.0092959
 </td>
 <td style="text-align:right;">
-0.0986371
+0.0964154
 </td>
 <td style="text-align:right;">
--0.3229
+-0.0203
 </td>
 <td style="text-align:right;">
-0.0638
+0.3576
 </td>
 <td style="text-align:right;">
-0.6799958
+0.5870288
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1172,28 +1294,28 @@ Rank 1.5
 1
 </td>
 <td style="text-align:right;">
--0.0092657
+-0.0540903
 </td>
 <td style="text-align:right;">
-0.0010417
+0.0001286
 </td>
 <td style="text-align:right;">
-0.0322747
+0.0113391
 </td>
 <td style="text-align:right;">
--0.0725
+-0.0763
 </td>
 <td style="text-align:right;">
-0.0540
+-0.0319
 </td>
 <td style="text-align:right;">
-0.9588667
+0.6114807
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1213,28 +1335,28 @@ Rank 1.6
 1
 </td>
 <td style="text-align:right;">
-0.3233933
+-0.0391537
 </td>
 <td style="text-align:right;">
-0.0854689
+0.0001620
 </td>
 <td style="text-align:right;">
-0.2923507
+0.0127277
 </td>
 <td style="text-align:right;">
--0.2496
+-0.0641
 </td>
 <td style="text-align:right;">
-0.8964
+-0.0142
 </td>
 <td style="text-align:right;">
-0.5497685
+0.7285498
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1243,7 +1365,7 @@ Rank 1.6
 1
 </td>
 <td style="text-align:left;">
-LBXD05LA
+LBXF08LA
 </td>
 </tr>
 <tr>
@@ -1254,28 +1376,28 @@ Rank 1.7
 1
 </td>
 <td style="text-align:right;">
--0.0125342
+-0.0323316
 </td>
 <td style="text-align:right;">
-0.0002278
+0.0001356
 </td>
 <td style="text-align:right;">
-0.0150914
+0.0116457
 </td>
 <td style="text-align:right;">
--0.0421
+-0.0552
 </td>
 <td style="text-align:right;">
-0.0170
+-0.0095
 </td>
 <td style="text-align:right;">
-0.9187320
+0.7644805
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1284,7 +1406,7 @@ Rank 1.7
 1
 </td>
 <td style="text-align:left;">
-LBXD03LA-LBXD05LA
+LBXD03LA-LBXF08LA
 </td>
 </tr>
 <tr>
@@ -1295,28 +1417,28 @@ Rank 1.8
 1
 </td>
 <td style="text-align:right;">
--0.3266618
+0.0609124
 </td>
 <td style="text-align:right;">
-0.1048432
+0.0001829
 </td>
 <td style="text-align:right;">
-0.3237951
+0.0135256
 </td>
 <td style="text-align:right;">
--0.9613
+0.0344
 </td>
 <td style="text-align:right;">
-0.3080
+0.0874
 </td>
 <td style="text-align:right;">
-0.5659218
+0.6004499
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1336,28 +1458,69 @@ Rank 1.9
 1
 </td>
 <td style="text-align:right;">
-0.0174654
+-0.1252976
 </td>
 <td style="text-align:right;">
-0.0001056
+0.0123424
 </td>
 <td style="text-align:right;">
-0.0102757
+0.1110964
 </td>
 <td style="text-align:right;">
--0.0027
+-0.3430
 </td>
 <td style="text-align:right;">
-0.0376
+0.0924
 </td>
 <td style="text-align:right;">
-0.8632057
+0.7069781
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-252
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+LBXD03LA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.10
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.1355719
+</td>
+<td style="text-align:right;">
+0.0180296
+</td>
+<td style="text-align:right;">
+0.1342743
+</td>
+<td style="text-align:right;">
+-0.3987
+</td>
+<td style="text-align:right;">
+0.1276
+</td>
+<td style="text-align:right;">
+0.7114006
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+201
 </td>
 <td style="text-align:right;">
 1
@@ -1371,75 +1534,34 @@ LBXD05LA
 </tr>
 <tr>
 <td style="text-align:left;">
-Rank 1.10
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-0.0306591
-</td>
-<td style="text-align:right;">
-0.0001328
-</td>
-<td style="text-align:right;">
-0.0115223
-</td>
-<td style="text-align:right;">
-0.0081
-</td>
-<td style="text-align:right;">
-0.0532
-</td>
-<td style="text-align:right;">
-0.7751682
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-252
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-LBXF08LA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Rank 1.11
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-0.0623361
+0.0575058
 </td>
 <td style="text-align:right;">
-0.0002136
+0.0001232
 </td>
 <td style="text-align:right;">
-0.0146155
+0.0110977
 </td>
 <td style="text-align:right;">
-0.0337
+0.0358
 </td>
 <td style="text-align:right;">
-0.0910
+0.0793
 </td>
 <td style="text-align:right;">
-0.6061179
+0.5851505
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-252
+201
 </td>
 <td style="text-align:right;">
 1
@@ -1448,7 +1570,7 @@ Rank 1.11
 1
 </td>
 <td style="text-align:left;">
-LBXD05LA-LBXF08LA
+LBXD03LA-LBXD05LA
 </td>
 </tr>
 <tr>
@@ -1459,28 +1581,28 @@ Rank 1.12
 1
 </td>
 <td style="text-align:right;">
-0.0142116
+0.3183752
 </td>
 <td style="text-align:right;">
-0.0001958
+0.0305139
 </td>
 <td style="text-align:right;">
-0.0139937
+0.1746823
 </td>
 <td style="text-align:right;">
--0.0132
+-0.0240
 </td>
 <td style="text-align:right;">
-0.0416
+0.6607
 </td>
 <td style="text-align:right;">
-0.9043746
+0.4462068
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-252
+201
 </td>
 <td style="text-align:right;">
 1
@@ -1500,28 +1622,28 @@ Rank 1.13
 1
 </td>
 <td style="text-align:right;">
--0.0125153
+0.2725149
 </td>
 <td style="text-align:right;">
-0.0004964
+0.0129081
 </td>
 <td style="text-align:right;">
-0.0222802
+0.1136138
 </td>
 <td style="text-align:right;">
--0.0562
+0.0498
 </td>
 <td style="text-align:right;">
-0.0312
+0.4952
 </td>
 <td style="text-align:right;">
-0.9331791
+0.4188084
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-251
+201
 </td>
 <td style="text-align:right;">
 1
@@ -1541,28 +1663,28 @@ Rank 1.14
 1
 </td>
 <td style="text-align:right;">
--0.0043293
+0.0235456
 </td>
 <td style="text-align:right;">
-0.0003071
+0.0027286
 </td>
 <td style="text-align:right;">
-0.0175237
+0.0522361
 </td>
 <td style="text-align:right;">
--0.0387
+-0.0788
 </td>
 <td style="text-align:right;">
-0.0300
+0.1259
 </td>
 <td style="text-align:right;">
-0.9739102
+0.9179465
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-251
+201
 </td>
 <td style="text-align:right;">
 1
@@ -1582,28 +1704,28 @@ Rank 1.15
 1
 </td>
 <td style="text-align:right;">
--0.1654466
+0.0284417
 </td>
 <td style="text-align:right;">
-0.2677712
+0.0022409
 </td>
 <td style="text-align:right;">
-0.5174662
+0.0473379
 </td>
 <td style="text-align:right;">
--1.1797
+-0.0643
 </td>
 <td style="text-align:right;">
-0.8488
+0.1212
 </td>
 <td style="text-align:right;">
-0.8180963
+0.8959947
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-251
+201
 </td>
 <td style="text-align:right;">
 1
@@ -1623,28 +1745,192 @@ Rank 1.16
 1
 </td>
 <td style="text-align:right;">
--0.1486020
+-0.2676189
 </td>
 <td style="text-align:right;">
-0.2607503
+0.0186074
 </td>
 <td style="text-align:right;">
-0.5106371
+0.1364088
 </td>
 <td style="text-align:right;">
--1.1494
+-0.5350
 </td>
 <td style="text-align:right;">
-0.8522
+-0.0003
 </td>
 <td style="text-align:right;">
-0.8352644
+0.4687002
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-251
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Interaction
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.17
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.0002447
+</td>
+<td style="text-align:right;">
+0.0000535
+</td>
+<td style="text-align:right;">
+0.0073114
+</td>
+<td style="text-align:right;">
+-0.0146
+</td>
+<td style="text-align:right;">
+0.0141
+</td>
+<td style="text-align:right;">
+0.9977163
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+LBXD03LA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.18
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.1147112
+</td>
+<td style="text-align:right;">
+0.0150682
+</td>
+<td style="text-align:right;">
+0.1227528
+</td>
+<td style="text-align:right;">
+-0.3553
+</td>
+<td style="text-align:right;">
+0.1259
+</td>
+<td style="text-align:right;">
+0.7433588
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+LBXD05LA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.19
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.1123677
+</td>
+<td style="text-align:right;">
+0.0151475
+</td>
+<td style="text-align:right;">
+0.1230752
+</td>
+<td style="text-align:right;">
+-0.3536
+</td>
+<td style="text-align:right;">
+0.1289
+</td>
+<td style="text-align:right;">
+0.7487412
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+LBXD03LA-LBXD05LA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.20
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0025882
+</td>
+<td style="text-align:right;">
+0.0302730
+</td>
+<td style="text-align:right;">
+0.1739915
+</td>
+<td style="text-align:right;">
+-0.3384
+</td>
+<td style="text-align:right;">
+0.3436
+</td>
+<td style="text-align:right;">
+0.9950493
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+201
 </td>
 <td style="text-align:right;">
 1
@@ -1658,9 +1944,16 @@ Interaction
 </tr>
 </tbody>
 </table>
-<p>Here we see LBXD03LA-LBXD05LA and LBXD03LA-LBXF08LA are found to be
-the top synergistic relationships. Above we show the k-fold specific
-results.</p>
+<p>These are now estimates for the top synergistic impact. The format of
+the table is similar but now we have the Type column which indicates
+which exposure the shift is for. Where one exposure is listed, that is a
+univariate shift, where two is listed that is a joint shift and for
+interaction this is comparing the expectation under joint shift to the
+sum of the estimates under the univariate shifts.</p>
+<p>If the interaction estimates are significant, we would expect the Psi
+under interaction to be positive, indicating the joint shift is larger
+than the sum of individual shifts. Variance estimates are similarly
+derived from the influence function and delta method.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">k_fold_antagonistic</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">NIEH_results</span><span class="op">$</span><span class="va">`K Fold Antagonism Results`</span><span class="op">)</span></span>
 <span></span>
@@ -1720,28 +2013,28 @@ Rank 1.1
 1
 </td>
 <td style="text-align:right;">
-0.0387685
+0.0730422
 </td>
 <td style="text-align:right;">
-0.0001322
+0.0003387
 </td>
 <td style="text-align:right;">
-0.0114960
+0.0184047
 </td>
 <td style="text-align:right;">
-0.0162
+0.0370
 </td>
 <td style="text-align:right;">
-0.0613
+0.1091
 </td>
 <td style="text-align:right;">
-0.7176649
+0.5902975
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1761,28 +2054,28 @@ Rank 1.2
 1
 </td>
 <td style="text-align:right;">
--0.0798934
+0.0195870
 </td>
 <td style="text-align:right;">
-0.0030628
+0.0002035
 </td>
 <td style="text-align:right;">
-0.0553430
+0.0142650
 </td>
 <td style="text-align:right;">
--0.1884
+-0.0084
 </td>
 <td style="text-align:right;">
-0.0286
+0.0475
 </td>
 <td style="text-align:right;">
-0.7341508
+0.8697346
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1802,28 +2095,28 @@ Rank 1.3
 1
 </td>
 <td style="text-align:right;">
-0.0242223
+0.0065742
 </td>
 <td style="text-align:right;">
-0.0002805
+0.0002298
 </td>
 <td style="text-align:right;">
-0.0167470
+0.0151587
 </td>
 <td style="text-align:right;">
--0.0086
+-0.0231
 </td>
 <td style="text-align:right;">
-0.0570
+0.0363
 </td>
 <td style="text-align:right;">
-0.8515238
+0.9574162
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1843,28 +2136,28 @@ Rank 1.4
 1
 </td>
 <td style="text-align:right;">
-0.0653472
+-0.0860550
 </td>
 <td style="text-align:right;">
-0.0034080
+0.0005404
 </td>
 <td style="text-align:right;">
-0.0583783
+0.0232468
 </td>
 <td style="text-align:right;">
--0.0491
+-0.1316
 </td>
 <td style="text-align:right;">
-0.1798
+-0.0405
 </td>
 <td style="text-align:right;">
-0.7868072
+0.5724749
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1884,28 +2177,28 @@ Rank 1.5
 1
 </td>
 <td style="text-align:right;">
-0.0201841
+-0.0102030
 </td>
 <td style="text-align:right;">
-0.0003160
+0.0001494
 </td>
 <td style="text-align:right;">
-0.0177752
+0.0122247
 </td>
 <td style="text-align:right;">
--0.0147
+-0.0342
 </td>
 <td style="text-align:right;">
-0.0550
+0.0138
 </td>
 <td style="text-align:right;">
-0.8796666
+0.9264757
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1925,28 +2218,28 @@ Rank 1.6
 1
 </td>
 <td style="text-align:right;">
-0.0009504
+0.0027759
 </td>
 <td style="text-align:right;">
-0.0000976
+0.0000643
 </td>
 <td style="text-align:right;">
-0.0098771
+0.0080176
 </td>
 <td style="text-align:right;">
--0.0184
+-0.0129
 </td>
 <td style="text-align:right;">
-0.0203
+0.0185
 </td>
 <td style="text-align:right;">
-0.9923698
+0.9752688
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -1966,28 +2259,28 @@ Rank 1.7
 1
 </td>
 <td style="text-align:right;">
-0.3373583
+0.0155900
 </td>
 <td style="text-align:right;">
-0.0230629
+0.0002475
 </td>
 <td style="text-align:right;">
-0.1518646
+0.0157325
 </td>
 <td style="text-align:right;">
-0.0397
+-0.0152
 </td>
 <td style="text-align:right;">
-0.6350
+0.0464
 </td>
 <td style="text-align:right;">
-0.3866594
+0.9010833
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -2007,28 +2300,28 @@ Rank 1.8
 1
 </td>
 <td style="text-align:right;">
-0.3162237
+0.0230170
 </td>
 <td style="text-align:right;">
-0.0229354
+0.0002578
 </td>
 <td style="text-align:right;">
-0.1514443
+0.0160567
 </td>
 <td style="text-align:right;">
-0.0194
+-0.0085
 </td>
 <td style="text-align:right;">
-0.6130
+0.0545
 </td>
 <td style="text-align:right;">
-0.4164569
+0.8558619
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-252
+202
 </td>
 <td style="text-align:right;">
 1
@@ -2048,28 +2341,28 @@ Rank 1.9
 1
 </td>
 <td style="text-align:right;">
-0.0193945
+0.0365694
 </td>
 <td style="text-align:right;">
-0.0001456
+0.0001913
 </td>
 <td style="text-align:right;">
-0.0120685
+0.0138329
 </td>
 <td style="text-align:right;">
--0.0043
+0.0095
 </td>
 <td style="text-align:right;">
-0.0430
+0.0637
 </td>
 <td style="text-align:right;">
-0.8598673
+0.7558547
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-252
+201
 </td>
 <td style="text-align:right;">
 1
@@ -2089,28 +2382,28 @@ Rank 1.10
 1
 </td>
 <td style="text-align:right;">
-0.0045192
+0.0048776
 </td>
 <td style="text-align:right;">
-0.0000368
+0.0000917
 </td>
 <td style="text-align:right;">
-0.0060683
+0.0095742
 </td>
 <td style="text-align:right;">
--0.0074
+-0.0139
 </td>
 <td style="text-align:right;">
-0.0164
+0.0236
 </td>
 <td style="text-align:right;">
-0.9537382
+0.9602428
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-252
+201
 </td>
 <td style="text-align:right;">
 1
@@ -2130,28 +2423,28 @@ Rank 1.11
 1
 </td>
 <td style="text-align:right;">
-0.0103226
+0.0029412
 </td>
 <td style="text-align:right;">
-0.0000486
+0.0002745
 </td>
 <td style="text-align:right;">
-0.0069730
+0.0165671
 </td>
 <td style="text-align:right;">
--0.0033
+-0.0295
 </td>
 <td style="text-align:right;">
-0.0240
+0.0354
 </td>
 <td style="text-align:right;">
-0.9016184
+0.9817695
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-252
+201
 </td>
 <td style="text-align:right;">
 1
@@ -2171,28 +2464,28 @@ Rank 1.12
 1
 </td>
 <td style="text-align:right;">
--0.0135911
+-0.0385058
 </td>
 <td style="text-align:right;">
-0.0001537
+0.0004507
 </td>
 <td style="text-align:right;">
-0.0123994
+0.0212296
 </td>
 <td style="text-align:right;">
--0.0379
+-0.0801
 </td>
 <td style="text-align:right;">
-0.0107
+0.0031
 </td>
 <td style="text-align:right;">
-0.9028559
+0.7915681
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-252
+201
 </td>
 <td style="text-align:right;">
 1
@@ -2212,28 +2505,28 @@ Rank 1.13
 1
 </td>
 <td style="text-align:right;">
-0.0269589
+-0.0068210
 </td>
 <td style="text-align:right;">
-0.0001387
+0.0003370
 </td>
 <td style="text-align:right;">
-0.0117756
+0.0183576
 </td>
 <td style="text-align:right;">
-0.0039
+-0.0428
 </td>
 <td style="text-align:right;">
-0.0500
+0.0292
 </td>
 <td style="text-align:right;">
-0.8037989
+0.9598487
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-251
+201
 </td>
 <td style="text-align:right;">
 1
@@ -2253,28 +2546,28 @@ Rank 1.14
 1
 </td>
 <td style="text-align:right;">
-0.0102523
+-0.0117301
 </td>
 <td style="text-align:right;">
-0.0001748
+0.0001073
 </td>
 <td style="text-align:right;">
-0.0132214
+0.0103578
 </td>
 <td style="text-align:right;">
--0.0157
+-0.0320
 </td>
 <td style="text-align:right;">
-0.0362
+0.0086
 </td>
 <td style="text-align:right;">
-0.9289524
+0.9082412
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-251
+201
 </td>
 <td style="text-align:right;">
 1
@@ -2294,28 +2587,28 @@ Rank 1.15
 1
 </td>
 <td style="text-align:right;">
-0.0146047
+0.0044069
 </td>
 <td style="text-align:right;">
-0.0002833
+0.0001401
 </td>
 <td style="text-align:right;">
-0.0168302
+0.0118372
 </td>
 <td style="text-align:right;">
--0.0184
+-0.0188
 </td>
 <td style="text-align:right;">
-0.0476
+0.0276
 </td>
 <td style="text-align:right;">
-0.9103665
+0.9676905
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-251
+201
 </td>
 <td style="text-align:right;">
 1
@@ -2335,28 +2628,192 @@ Rank 1.16
 1
 </td>
 <td style="text-align:right;">
--0.0226066
+0.0229581
 </td>
 <td style="text-align:right;">
-0.0002782
+0.0003880
 </td>
 <td style="text-align:right;">
-0.0166802
+0.0196985
 </td>
 <td style="text-align:right;">
--0.0553
+-0.0157
 </td>
 <td style="text-align:right;">
-0.0101
+0.0616
 </td>
 <td style="text-align:right;">
-0.8610493
+0.8700651
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-251
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Interaction
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.17
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0122342
+</td>
+<td style="text-align:right;">
+0.0001369
+</td>
+<td style="text-align:right;">
+0.0117024
+</td>
+<td style="text-align:right;">
+-0.0107
+</td>
+<td style="text-align:right;">
+0.0352
+</td>
+<td style="text-align:right;">
+0.9099565
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+LBXF03LA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.18
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.0210257
+</td>
+<td style="text-align:right;">
+0.0001546
+</td>
+<td style="text-align:right;">
+0.0124327
+</td>
+<td style="text-align:right;">
+-0.0454
+</td>
+<td style="text-align:right;">
+0.0033
+</td>
+<td style="text-align:right;">
+0.8504313
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+LBXF04LA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.19
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.0102182
+</td>
+<td style="text-align:right;">
+0.0001578
+</td>
+<td style="text-align:right;">
+0.0125601
+</td>
+<td style="text-align:right;">
+-0.0348
+</td>
+<td style="text-align:right;">
+0.0144
+</td>
+<td style="text-align:right;">
+0.9273530
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+201
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+LBXF03LA-LBXF04LA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rank 1.20
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.0014267
+</td>
+<td style="text-align:right;">
+0.0002581
+</td>
+<td style="text-align:right;">
+0.0160662
+</td>
+<td style="text-align:right;">
+-0.0329
+</td>
+<td style="text-align:right;">
+0.0301
+</td>
+<td style="text-align:right;">
+0.9910192
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+201
 </td>
 <td style="text-align:right;">
 1
@@ -2370,12 +2827,15 @@ Interaction
 </tr>
 </tbody>
 </table>
-<p>Here we see LBXF03LA-LBXF04LA is found to have the most antagonistic
-effect in all the folds. In each fold we show the effects of each
-exposure shifted individually, the joint shift of both together, and
-comparing the joint shift to the addition of individual shifts. Since
-this effect was found consistently we can look at the pooled top
-antagonistic result.</p>
+<p>This table is formatted in the same way as our synergistic results
+where we compare joint shifts to individual shifts. Now however, if
+interaction effects are significant, we expect the joint shift to be
+less than the sum of individual shifts and therefore the interaction
+effect should be negative.</p>
+<p>Again, it is important to assess if the same exposures are found in
+the synergist and antagonistic relationships. If they are, we can
+interpret the pooled TMLE estimates, here we show our pooled estimates
+for the antagonistic interaction:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">NIEH_results</span><span class="op">$</span><span class="va">`Pooled Antagonism Results by Rank`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -2432,22 +2892,22 @@ Type
 Rank 1
 </td>
 <td style="text-align:right;">
-0.0034218
+-0.0029595
 </td>
 <td style="text-align:right;">
-0.0000642
+6.97e-05
 </td>
 <td style="text-align:right;">
-0.0080098
+0.0083486
 </td>
 <td style="text-align:right;">
--0.0123
+-0.0193
 </td>
 <td style="text-align:right;">
-0.0191
+0.0134
 </td>
 <td style="text-align:right;">
-0.9695017
+0.9741608
 </td>
 <td style="text-align:left;">
 Pooled TMLE
@@ -2470,22 +2930,22 @@ Var 1
 Rank 1
 </td>
 <td style="text-align:right;">
-0.0349632
+0.0009444
 </td>
 <td style="text-align:right;">
-0.0002331
+5.26e-05
 </td>
 <td style="text-align:right;">
-0.0152671
+0.0072535
 </td>
 <td style="text-align:right;">
-0.0050
+-0.0133
 </td>
 <td style="text-align:right;">
-0.0649
+0.0152
 </td>
 <td style="text-align:right;">
-0.7772037
+0.9911528
 </td>
 <td style="text-align:left;">
 Pooled TMLE
@@ -2508,22 +2968,22 @@ Var 2
 Rank 1
 </td>
 <td style="text-align:right;">
-0.0818336
+0.0194557
 </td>
 <td style="text-align:right;">
-0.0013581
+7.29e-05
 </td>
 <td style="text-align:right;">
-0.0368529
+0.0085384
 </td>
 <td style="text-align:right;">
-0.0096
+0.0027
 </td>
 <td style="text-align:right;">
-0.1541
+0.0362
 </td>
 <td style="text-align:right;">
-0.6699034
+0.8332369
 </td>
 <td style="text-align:left;">
 Pooled TMLE
@@ -2546,22 +3006,22 @@ Joint
 Rank 1
 </td>
 <td style="text-align:right;">
-0.0434486
+0.0214709
 </td>
 <td style="text-align:right;">
-0.0014717
+9.63e-05
 </td>
 <td style="text-align:right;">
-0.0383624
+0.0098110
 </td>
 <td style="text-align:right;">
--0.0317
+0.0022
 </td>
 <td style="text-align:right;">
-0.1186
+0.0407
 </td>
 <td style="text-align:right;">
-0.8244451
+0.8283903
 </td>
 <td style="text-align:left;">
 Pooled TMLE
@@ -2584,9 +3044,47 @@ Interaction
 </td>
 </tr></tbody>
 </table>
-<p>Here we see the results for the pooled individual shifts, which is
-LBXF03LA, the second exposure LBXF04LA, the expectation under joint
-shift and the interaction effect.</p>
+<p>This table is formatted similarly but now instead of having variable
+names under Type we have Var 1, Var 2, Joint, Interaction. This is
+because we are pooling estimates for the top antagonistic interaction
+and the variables used in this interation may differ. If there is
+consistency across all the folds, Var 1 corresponds to the first
+variable that is shifted, Var 2 the second, Joint is the joint shift and
+Interaction is the same comparison.</p>
+<p>Again, if the interaction is significant and results are consistent
+we would expect this estimate to be negative. By pooling, we are able to
+leverage the full data which gives us more narrow confidence
+intervals.</p>
+</div>
+<div class="section level2">
+<h2 id="comparing-to-previous-findings">Comparing to Previous Findings<a class="anchor" aria-label="anchor" href="#comparing-to-previous-findings"></a>
+</h2>
+<p>Positive Association</p>
+<p>For a shift of 1 unit in all exposures we found LBXF03LA
+(2,3,4,7,8-pncdf Lipid Adj (pg/g)) to have the strongest positive
+association. This matches the penalized regression results of Gibson et.
+al. Similarly, this chemical had the second highest weight in WQS
+regression. Using BKMR this chemical showed the highest positive
+association in the dose-response plots.</p>
+<p>Negative Association</p>
+<p>We found LBXD03LA (1,2,3,6,7,8-hxcdd Lipid Adj (pg/g)) to have the
+strongest negative association. Which is corroborated by the results
+from Gibson et al., however there are many null/negative chemical
+associations.</p>
+<p>Synergy Results</p>
+<p>LBXD03LA-LBXD05LA ((1,2,3,6,7,8-hxcdd - 1,2,3,4,6,7,8-hpcdd) had the
+most consistency, 3 of 4 folds in this small example. From Gibson, no
+interactions were found and the other methods did not assess for
+interactions. None of the interventions were significant here with CI’s
+spanning the range from antagonism to synergy for the interaction
+effect. For the synergy effect we would expect the joint shift to be
+larger than the additive effect.</p>
+<p>Antagonistic Results</p>
+<p>LBXF03LA (2,3,4,7,8-pncdf) and LBXF04LA (1,2,3,4,7,8-hxcdf) showed
+the strongest antagonism and this relationship was found across all the
+folds. This effect is not significant but what we would expect to see
+for this result is that the joint shift is less than the additive
+effect</p>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-diaz2012population" class="csl-entry">
 Dı́az, Iván, and Mark J van der Laan. 2012. <span>“Population

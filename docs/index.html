@@ -69,7 +69,8 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="rinterxshift-">R/<code>InterXShift</code> <img src="reference/figures/InterXshift_logo.png" style="float:right; height:200px;"><a class="anchor" aria-label="anchor" href="#rinterxshift-"></a>
+<div class="page-header"><h1 id="rinterxshift">R/<code>InterXShift</code>
+<a class="anchor" aria-label="anchor" href="#rinterxshift"></a>
 </h1></div>
 <!-- badges: start -->
 
@@ -383,7 +384,7 @@ W
 </tr>
 </tbody>
 </table>
-<p>Based on the data key, we expect X1 to have the strongest positive effect, X5 the strongest negative. So we would expect these to take the top ranks for these marginal associations. For interactions we expect to find interactions built into the data if there is enough observations in the region. The github page gives details on the types of interactions built into this synthetic data.</p>
+<p>Based on the data key, we expect X1 to have the strongest positive effect, X5 the strongest negative. So we would expect these to take the top ranks for these marginal associations. For interactions we expect to find interactions built into the data that are antagonistic and synergistic. The github page gives details on the types of interactions built into this synthetic data. The above image shows the interaction types that we might expect to find.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">ptm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/proc.time.html" class="external-link">proc.time</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -596,7 +597,7 @@ W
 <span><span class="co">#&gt; solnp--&gt; Completed in 2 iterations</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/proc.time.html" class="external-link">proc.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">ptm</span></span>
 <span><span class="co">#&gt;     user   system  elapsed </span></span>
-<span><span class="co">#&gt;   67.194    3.702 1277.583</span></span>
+<span><span class="co">#&gt;   60.758    3.005 1236.890</span></span>
 <span></span>
 <span><span class="co">## marginal effects</span></span>
 <span><span class="va">top_positive_effects</span> <span class="op">&lt;-</span> <span class="va">sim_results</span><span class="op">$</span><span class="va">`Pos Shift Results by Rank`</span></span>
@@ -2466,7 +2467,7 @@ Interaction
 <div class="section level2">
 <h2 id="funding">Funding<a class="anchor" aria-label="anchor" href="#funding"></a>
 </h2>
-<p>The development of this software was supported in part through grants from the</p>
+<p>The development of this software was supported in part through NIH grant P42ES004705 from NIEHS</p>
 <hr>
 </div>
 <div class="section level2">

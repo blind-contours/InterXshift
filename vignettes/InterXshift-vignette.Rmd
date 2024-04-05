@@ -29,12 +29,12 @@ set.seed(seed)
 
 ## Motivation 
 
-The motivation behind the package InterXshift is to address the limitations of traditional statistical methods in environmental epidemiology studies. Analysts are often interested in understanding the joint impact of a mixed exposure, i.e. a vector of exposures, but the most important exposures and exposure sets remain unknown. Traditional methods make overly simplistic assumptions, such as linear and additive relationships, and the resulting statistical quantities may not be directly applicable to public policy decisions.
+The motivation behind the package InterXshift is to address the limitations of traditional statistical methods in environmental epidemiology studies. Analysts are often interested in understanding the joint impact of a mixed exposure, i.e. a vector of exposures, but the most important exposures and exposure sets remain unknown. Traditional methods make overly simplistic assumptions, such as linear and additive relationships, and the resulting statistical quantities may not be directly applicable to public policy decisions. More flexible methods offer dose response relationships but do not result in an easily interpretable estimate. Here, we utilize cross-validated targeted learning with stochastic shift interventions to identify exposures in a mixture that have the strongest positive and negative effect. We also define interaction as a comparison of the expected outcome under joint shift to additive shifts. With this definition we identify the top synergistic and antagonistic relationships and provide efficient estimates of stochastic shift interventions. 
 
 
 ## Target Parameter 
 
-To overcome these limitations, InterXshift uses data-adaptive machine learning methods to identify the exposures and exposure sets that have the most synergy or antagonism. This is defined based on our target parameter: 
+InterXshift uses data-adaptive machine learning methods to identify the exposures and exposure sets that have the most synergy or antagonism. This is defined based on our target parameter: 
 
 $$
 \begin{align}
@@ -83,17 +83,14 @@ We get pooled rank synergy, antagonism, positive and negative effects. If the sa
 
 ## NHANES Data
 
-Here we will try and replicate the analysis by Gibson et. al., 
+Here we will try and replicate the analysis by Gibson et. al.:
+
 https://ehjournal.biomedcentral.com/articles/10.1186/s12940-019-0515-1
 
 and Mitro et. al, 
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4858394/
 
 Who used the NHANES 2001-2002 data to investigate 18 POP exposures on telomere length. 
-
-Because reduced telomere length is associated with more biological aging and higher morbidity, we 
-will try and identify which region in the POP space would maximize telomere length. That is, 
-we want to find the region that, if we created a regulation on those chemicals, would result in maximal change in elongating telomere length. 
 
 Let's first load the data and investigate the variables: 
 
@@ -191,11 +188,11 @@ NIEH_results <- InterXshift(
   a = a,
   y = y,
   deltas = deltas,
-  n_folds = 4,
+  n_folds = 5,
   outcome_type = "continuous",
   parallel = TRUE,
   parallel_type = "multi_session",
-  num_cores = 4,
+  num_cores = 5,
   seed = seed,
   adaptive_delta = FALSE,
   top_n = 1
@@ -217,7 +214,11 @@ NIEH_results$`Pos Shift Results by Rank` %>%
   kableExtra::kbl(caption = "Top Positive Effects") %>%
   kable_classic(full_width = F, html_font = "Cambria")
 ```
-Here we see LBXF03LA is found in all the folds for the top positive effects. The pooled effect indicates that for a 1-unit increase telomere length increases by 0.008 with p = 0.35. 
+Here we see LBXF03LA is found in all the folds for the top positive effects. Estimates under Psi indicate the change in expected outcome under a 1-unit intervention compared to the mean outcome under the observed exposure distribution. Fold is the fold number estimates are being made for and the last column is the pooled TMLE estimate for all of our rank 1 estimates. Variance is estimated from the influence function for stochastic shift interventions with subsequent standard error and CI estimates. 
+
+N is the number of observations used in the calculation. In the pooled results this should be equal to the total sample size. Here, because we are interested in positive associations, if the associations are significant we expect our Psi estimates to be positive, indicating a shift is greater than the observed mean outcome. 
+
+Users here should look for inconsistencies in the exposure that is found as the top positive effect. Inconsistencies indicate there is not "strong signal" for this estimate and make the pooled rank 1 estimate difficult to interpret. 
 
 ```{r negative results, eval = TRUE}
 NIEH_results$`Neg Shift Results by Rank` %>%
@@ -225,7 +226,7 @@ NIEH_results$`Neg Shift Results by Rank` %>%
   kable_classic(full_width = F, html_font = "Cambria")
 ```
 
-Here we see some inconsistency in the top negative result with 2 folds finding LBXD03LA and one fold LBXF08LA. This makes interpreting the pooled estimate difficult. Again more folds fixes this issue. However, the analyst can interpret the k-fold specific results. 
+Here is the same type of table but for the top negative results. Output is in the same format as above for the positive results. If the Psi estimates are significant, we expect these effects to be negative. Indicating the shift by 1 unit reduces the expected outcome compared to the observed mean. 
 
 
 ```{r top synergy results, eval = TRUE}
@@ -236,7 +237,9 @@ k_fold_synergy %>%
   kable_classic(full_width = F, html_font = "Cambria")
 ```
 
-Here we see LBXD03LA-LBXD05LA and LBXD03LA-LBXF08LA are found to be the top synergistic relationships. Above we show the k-fold specific results.
+These are now estimates for the top synergistic impact. The format of the table is similar but now we have the Type column which indicates which exposure the shift is for. Where one exposure is listed, that is a univariate shift, where two is listed that is a joint shift and for interaction this is comparing the expectation under joint shift to the sum of the estimates under the univariate shifts. 
+
+If the interaction estimates are significant, we would expect the Psi under interaction to be positive, indicating the joint shift is larger than the sum of individual shifts. Variance estimates are similarly derived from the influence function and delta method. 
 
 ```{r top antagonistic results, eval = TRUE}
 k_fold_antagonistic <- do.call(rbind, NIEH_results$`K Fold Antagonism Results`)
@@ -246,7 +249,9 @@ k_fold_antagonistic %>%
   kable_classic(full_width = F, html_font = "Cambria")
 ```
 
-Here we see LBXF03LA-LBXF04LA is found to have the most antagonistic effect in all the folds. In each fold we show the effects of each exposure shifted individually, the joint shift of both together, and comparing the joint shift to the addition of individual shifts. Since this effect was found consistently we can look at the pooled top antagonistic result. 
+This table is formatted in the same way as our synergistic results where we compare joint shifts to individual shifts. Now however, if interaction effects are significant, we expect the joint shift to be less than the sum of individual shifts and therefore the interaction effect should be negative. 
+
+Again, it is important to assess if the same exposures are found in the synergist and antagonistic relationships. If they are, we can interpret the pooled TMLE estimates, here we show our pooled estimates for the antagonistic interaction: 
 
 ```{r top pooled antagonistic results, eval = TRUE}
 
@@ -254,4 +259,28 @@ NIEH_results$`Pooled Antagonism Results by Rank` %>%
   kableExtra::kbl(caption = "Pooled Antagonistic Effects") %>%
   kable_classic(full_width = F, html_font = "Cambria")
 ```
-Here we see the results for the pooled individual shifts, which is LBXF03LA, the second exposure LBXF04LA, the expectation under joint shift and the interaction effect. 
+
+This table is formatted similarly but now instead of having variable names under Type we have Var 1, Var 2, Joint, Interaction. This is because we are pooling estimates for the top antagonistic interaction and the variables used in this interation may differ. If there is consistency across all the folds, Var 1 corresponds to the first variable that is shifted, Var 2 the second, Joint is the joint shift and Interaction is the same comparison. 
+
+Again, if the interaction is significant and results are consistent we would expect this estimate to be negative. By pooling, we are able to leverage the full data which gives us more narrow confidence intervals. 
+
+## Comparing to Previous Findings 
+
+Positive Association 
+
+For a shift of 1 unit in all exposures we found LBXF03LA (2,3,4,7,8-pncdf Lipid Adj (pg/g)) to have the strongest positive association. This matches the penalized regression results of Gibson et. al. Similarly, this chemical had the second highest weight in WQS regression. Using BKMR this chemical showed the highest positive association in the dose-response plots. 
+
+Negative Association 
+
+We found LBXD03LA (1,2,3,6,7,8-hxcdd Lipid Adj (pg/g)) to have the strongest negative association. Which is corroborated by the results from Gibson et al., however there are many null/negative chemical associations. 
+
+Synergy Results 
+
+LBXD03LA-LBXD05LA ((1,2,3,6,7,8-hxcdd - 1,2,3,4,6,7,8-hpcdd) had the most consistency, 3 of 4 folds in this small example. From Gibson, no interactions were found and the other methods did not assess for interactions. None of the interventions were significant here with CI's spanning the range from antagonism to synergy for the interaction effect. For the synergy effect we would expect the joint shift to be larger than the additive effect. 
+
+Antagonistic Results 
+
+LBXF03LA (2,3,4,7,8-pncdf) and LBXF04LA (1,2,3,4,7,8-hxcdf) showed the strongest antagonism and this relationship was found across all the folds. This effect is not significant but what we would expect to see for this result is that the joint shift is less than the additive effect 
+
+
+

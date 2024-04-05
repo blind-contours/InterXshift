@@ -36,9 +36,6 @@ __Authors:__ [David McCoy](https://davidmccoy.org)
 
 ## What's `InterXshift`?
 
-<img src="https://github.com/blind-contours/InterXshift/blob/main/InterXshift_logo.png" width="230">
-
-
 
 The `InterXshift` R package offers an approach which identifies and estimates the impact interactions in a mixed exposure on an outcome. We define interaction as the counterfactual mean of the outcome under stochastic interventions of two exposures compared to the additive counterfactual mean of the two expowures intervened on indepdentently. These interventions or exposure changes depend on naturally observed values, as described in past literature [@diaz2012population; @haneuse2013estimation].
 
@@ -117,8 +114,6 @@ head(NIEHS_data_1) %>%
   kbl(caption = "NIEHS Data") %>%
   kable_classic(full_width = F, html_font = "Cambria")
 ```
-
-<img src="https://github.com/blind-contours/InterXshift/blob/main/man/figures/NIEHS_interactions.png" width="230">
 
 
 Based on the data key, we expect X1 to have the strongest positive effect, X5 the strongest negative. So we would expect these to take the top ranks for these marginal associations. For interactions we expect to find interactions built into the data that are antagonistic and synergistic. The github page gives details on the types of interactions built into this synthetic data. The above image shows the interaction types that we might expect to find.

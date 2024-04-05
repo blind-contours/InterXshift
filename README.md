@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# R/`InterXShift` <img src="man/figures/InterXshift_logo.png" style="float:right; height:200px;">
+# R/`InterXShift`
 
 <!-- badges: start -->
 
@@ -412,9 +412,10 @@ W
 Based on the data key, we expect X1 to have the strongest positive
 effect, X5 the strongest negative. So we would expect these to take the
 top ranks for these marginal associations. For interactions we expect to
-find interactions built into the data if there is enough observations in
-the region. The github page gives details on the types of interactions
-built into this synthetic data.
+find interactions built into the data that are antagonistic and
+synergistic. The github page gives details on the types of interactions
+built into this synthetic data. The above image shows the interaction
+types that we might expect to find.
 
 ``` r
 
@@ -628,7 +629,7 @@ sim_results <- InterXshift(
 #> solnp--> Completed in 2 iterations
 proc.time() - ptm
 #>     user   system  elapsed 
-#>   67.194    3.702 1277.583
+#>   60.758    3.005 1236.890
 
 ## marginal effects
 top_positive_effects <- sim_results$`Pos Shift Results by Rank`
@@ -2593,8 +2594,8 @@ After using the `InterXshift` R package, please cite the following:
 
 ## Funding
 
-The development of this software was supported in part through grants
-from the
+The development of this software was supported in part through NIH grant
+P42ES004705 from NIEHS
 
 ------------------------------------------------------------------------
 
