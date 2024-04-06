@@ -217,13 +217,10 @@ InterXshift <- function(w,
           at = at,
           adaptive_delta = adaptive_delta,
           hn_trunc_thresh = hn_trunc_thresh,
-          use_multinomial = FALSE,
           lower_bound = lower_bound,
           upper_bound = upper_bound,
-          outcome_type = "continuous",
-          density_type = "sl",
-          n_bins = n_bins,
-          max_degree = max_degree
+          outcome_type = "continuous"
+
         )
 
         delta <- ind_gn_exp_estim$delta
@@ -301,13 +298,9 @@ InterXshift <- function(w,
           at = at,
           adaptive_delta = adaptive_delta,
           hn_trunc_thresh = hn_trunc_thresh,
-          use_multinomial = FALSE,
           lower_bound = lower_bound,
           upper_bound = upper_bound,
-          outcome_type = "continuous",
-          density_type = "sl",
-          n_bins = n_bins,
-          max_degree = max_degree
+          outcome_type = "continuous"
         )
 
         delta <- ind_gn_exp_estim$delta
@@ -385,10 +378,6 @@ InterXshift <- function(w,
           at = at,
           adaptive_delta = adaptive_delta,
           hn_trunc_thresh = hn_trunc_thresh,
-          use_multinomial = FALSE,
-          density_type = "sl",
-          max_degree = max_degree,
-          n_bins = n_bins,
           outcome_type = "continuous"
         )
 
@@ -482,10 +471,6 @@ InterXshift <- function(w,
           at = at,
           adaptive_delta = adaptive_delta,
           hn_trunc_thresh = hn_trunc_thresh,
-          use_multinomial = FALSE,
-          density_type = "sl",
-          max_degree = max_degree,
-          n_bins = n_bins,
           outcome_type = "continuous"
         )
 
