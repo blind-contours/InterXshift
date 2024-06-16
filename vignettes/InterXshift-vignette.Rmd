@@ -171,11 +171,7 @@ exposures_to_keep <- setdiff(exposures, exposures_to_remove)
 ## Run InterXshift 
 
 ```{r run InterXshift for NHANES, warning=FALSE, message=FALSE}
-deltas <- list(
-  "LBX074LA" = 1, "LBX099LA" = 1, "LBXD03LA" = 1,
-  "LBXD05LA" = 1, "LBXF03LA" = 1, "LBXF04LA" = 1, "LBXF08LA" = 1, 
-  "LBXPCBLA" = 1
-)
+
 
 ptm <- proc.time()
 
@@ -183,19 +179,27 @@ w <- NHANES_eurocim[, covariates]
 a <- NHANES_eurocim[, exposures_to_keep]
 y <- NHANES_eurocim$TELOMEAN
 
+deltas <- a %>%
+  summarise(across(everything(), sd, na.rm = TRUE)) %>%
+  as.list()
+
+# Make the deltas negative
+deltas <- lapply(deltas, function(x) -x)
+
 NIEH_results <- InterXshift(
   w = w,
   a = a,
   y = y,
   deltas = deltas,
-  n_folds = 5,
+  n_folds = 10,
   outcome_type = "continuous",
   parallel = TRUE,
   parallel_type = "multi_session",
   num_cores = 5,
   seed = seed,
   adaptive_delta = FALSE,
-  top_n = 1
+  top_n = 1,
+  density_classification = TRUE
 )
 
 proc.time() - ptm

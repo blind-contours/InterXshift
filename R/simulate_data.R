@@ -47,10 +47,17 @@ simulate_data <- function(n_obs = 100000,
   covars_1[, 3] <- 1
 
   y_mean <- function(mixtures, covars) {
-    1.3 * mixtures[, 4] +
-      ifelse(covars[, 3] == 1, mixtures[, 3]^2, mixtures[, 3]) +
-      0.4 * mixtures[, 4] * mixtures[, 1] +
-      0.1 * covars[, 1] + 0.3 * covars[, 2]
+
+    response <- 1.3 * mixtures[, 4] +
+      0.1 * covars[, 1] +
+      0.3 * covars[, 2] +
+      0.05 * mixtures[, 3]
+
+    # Enhanced interaction between mixtures[, 4] and mixtures[, 1]
+    response <- response +
+      3.2 * mixtures[, 4] * mixtures[, 1] +  # Basic interaction
+      1.0 * (mixtures[, 4] * mixtures[, 1])^2 +  # Second degree polynomial interaction
+      0.5 * mixtures[, 4]^2 * mixtures[, 1]  # Non-symmetric higher degree interaction
   }
 
   y <- y_mean(mixtures, covars)
@@ -77,20 +84,11 @@ simulate_data <- function(n_obs = 100000,
   mixtures_m3[, 3] <- mixtures[, 3] + delta
   m3_y_shifted <- y_mean(mixtures_m3, covars)
 
-  diff <- m3_y_shifted - y
-
-  m3_y_shifted_covar0 <- mean(diff[covars$V3 == 0])
-  m3_y_shifted_covar1 <- mean(diff[covars$V3 == 1])
-
-  effect_mod_results <- list(
-    "Level 0 Shift Diff in W3 <= 0" = m3_y_shifted_covar1,
-    "Level 1 Shift Diff in W3 <= 0" = m3_y_shifted_covar0
-  )
-
   m3_effect <- mean(
     m3_y_shifted -
       y
   )
+
 
   # shift mixture 4
   mixtures_m4[, 4] <- mixtures[, 4] + delta
@@ -123,7 +121,6 @@ simulate_data <- function(n_obs = 100000,
     "m3_effect" = m3_effect,
     "m4_effect" = m4_effect,
     "m14_effect" = m14_effect,
-    "m14_intxn" = m14_intxn,
-    "effect_mod" = effect_mod_results
+    "m14_intxn" = m14_intxn
   ))
 }

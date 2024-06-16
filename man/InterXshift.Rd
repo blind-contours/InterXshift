@@ -26,7 +26,8 @@ InterXshift(
   hn_trunc_thresh = 10,
   adaptive_delta = FALSE,
   discover_only = FALSE,
-  top_n = 2
+  top_n = 2,
+  density_classification = TRUE
 )
 }
 \arguments{

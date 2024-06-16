@@ -67,8 +67,6 @@ InterXshift <- function(w,
                       pi_learner = NULL,
                       mu_learner = NULL,
                       g_learner = NULL,
-                      e_learner = NULL,
-                      zeta_learner = NULL,
                       n_folds = 2,
                       outcome_type = "continuous",
                       parallel = TRUE,
@@ -78,7 +76,8 @@ InterXshift <- function(w,
                       hn_trunc_thresh = 10,
                       adaptive_delta = FALSE,
                       discover_only = FALSE,
-                      top_n = 2) {
+                      top_n = 2,
+                      density_classification = TRUE) {
   # check arguments and set up some objects for programmatic convenience
   call <- match.call(expand.dots = TRUE)
   estimator <- match.arg(estimator)
@@ -112,19 +111,10 @@ InterXshift <- function(w,
     mu_learner <- sls$mu_learner
   }
 
-  if (is.null(zeta_learner)) {
-    sls <- create_sls()
-    zeta_learner <- sls$zeta_learner
-  }
 
   if (is.null(g_learner)) {
     sls <- create_sls()
     g_learner <- sls$g_learner
-  }
-
-  if (is.null(e_learner)) {
-    sls <- create_sls()
-    e_learner <- sls$e_learner
   }
 
   if (parallel == TRUE) {
@@ -207,6 +197,10 @@ InterXshift <- function(w,
         lower_bound <- min(min(av[[exposure]]), min(at[[exposure]]))
         upper_bound <- max(max(av[[exposure]]), max(at[[exposure]]))
 
+        if (density_classification) {
+          ind_gn_exp_estim <- estimate_density_ratio(at = at, av = av, delta =  delta, var = exposure, covars = c(exposure, w_names), classifier = mu_learner)
+        } else {
+
 
         ind_gn_exp_estim <- indiv_stoch_shift_est_g_exp(
           exposure = exposure,
@@ -220,10 +214,12 @@ InterXshift <- function(w,
           lower_bound = lower_bound,
           upper_bound = upper_bound,
           outcome_type = "continuous"
-
         )
 
         delta <- ind_gn_exp_estim$delta
+        }
+
+
 
         covars <- c(a_names, w_names)
 
@@ -289,6 +285,11 @@ InterXshift <- function(w,
         upper_bound <- max(max(av[[exposure]]), max(at[[exposure]]))
 
 
+        if (density_classification) {
+          ind_gn_exp_estim <- estimate_density_ratio(at = at, av = av, delta =  delta, var = exposure, covars = c(exposure, w_names), classifier = mu_learner)
+        } else {
+
+
         ind_gn_exp_estim <- indiv_stoch_shift_est_g_exp(
           exposure = exposure,
           delta = delta,
@@ -304,6 +305,7 @@ InterXshift <- function(w,
         )
 
         delta <- ind_gn_exp_estim$delta
+        }
 
         covars <- c(a_names, w_names)
 
@@ -369,6 +371,19 @@ InterXshift <- function(w,
 
         covars <- c(w_names)
 
+        if (density_classification) {
+          joint_gn_exp_estims <- list()
+          for (i in 1:length(exposures)) {
+            exposure_i <- exposures[[i]]
+            delta_i <- deltas[exposure_i]
+            results <- estimate_density_ratio(at = at, av = av, delta =  delta_i, var = exposure_i, covars = c(exposure_i, w_names), classifier = mu_learner)
+            joint_gn_exp_estims[["Hn_results"]][[i]] <- results$Hn_av
+          }
+
+          deltas_updated <- delta
+          deltas_updated[[3]] <- c(deltas_updated[[1]], deltas_updated[[2]])
+        } else {
+
         joint_gn_exp_estims <- joint_stoch_shift_est_g_exp(
           exposures,
           deltas,
@@ -390,6 +405,7 @@ InterXshift <- function(w,
 
         deltas_updated <- joint_gn_exp_estims$delta_results
         deltas_updated[[3]] <- c(deltas_updated[[1]], deltas_updated[[2]])
+        }
 
         covars <- c(a_names, w_names)
 
@@ -462,6 +478,20 @@ InterXshift <- function(w,
 
         covars <- c(w_names)
 
+
+        if (density_classification) {
+          joint_gn_exp_estims <- list()
+          for (i in 1:length(exposures)) {
+            exposure_i <- exposures[[i]]
+            delta_i <- deltas[exposure_i]
+            results <- estimate_density_ratio(at = at, av = av, delta =  delta_i, var = exposure_i, covars = c(exposure_i, w_names), classifier = mu_learner)
+            joint_gn_exp_estims[["Hn_results"]][[i]] <- results$Hn_av
+          }
+
+          deltas_updated <- delta
+          deltas_updated[[3]] <- c(deltas_updated[[1]], deltas_updated[[2]])
+        } else {
+
         joint_gn_exp_estims <- joint_stoch_shift_est_g_exp(
           exposures,
           deltas,
@@ -483,6 +513,8 @@ InterXshift <- function(w,
 
         deltas_updated <- joint_gn_exp_estims$delta_results
         deltas_updated[[3]] <- c(deltas_updated[[1]], deltas_updated[[2]])
+
+        }
 
         covars <- c(a_names, w_names)
 

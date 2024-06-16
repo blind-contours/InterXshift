@@ -15,7 +15,8 @@ indiv_stoch_shift_est_g_exp(
   hn_trunc_thresh,
   lower_bound,
   upper_bound,
-  outcome_type
+  outcome_type,
+  density_classification
 )
 }
 \arguments{

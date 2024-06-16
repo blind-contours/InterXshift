@@ -52,11 +52,16 @@ find_synergy_antagonism <- function(data, deltas, a_names, w_names, outcome, out
     data = data,
     covariates = c(a_names, w_names), # w_names assumed to be predefined
     outcome = outcome,
-    outcome_type = outcome_type
+    outcome_type = outcome_type,
+    folds = 5
   )
 
   # Train Super Learner
-  sl <- sl3::Lrnr_sl$new(learners = mu_learner)
+  sl <- sl3::Lrnr_sl$new(
+    learners = mu_learner,
+    metalearner = sl3::Lrnr_nnls$new()
+  )
+
   sl_fit <- sl$train(task)
 
   # Initialize data frames for storing individual and interaction effects
@@ -87,7 +92,7 @@ find_synergy_antagonism <- function(data, deltas, a_names, w_names, outcome, out
     shifted_data[vars] <- shifted_data[vars] + deltas[indices]
     joint_predictions <- sl_fit$predict(sl3::make_sl3_Task(data = shifted_data, covariates = c(a_names, w_names), outcome = outcome))
     individual_sum <- sum(individual_effects_df$Effect[individual_effects_df$Variable %in% vars])
-    interaction_effect <- mean(data[[outcome]] - joint_predictions) - individual_sum
+    interaction_effect <- mean((joint_predictions - data[[outcome]]) - individual_sum)
     interaction_effects_df <- rbind(interaction_effects_df, data.frame(Variable1 = vars[1], Variable2 = vars[2], Effect = interaction_effect))
   }
 

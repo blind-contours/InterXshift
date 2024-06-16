@@ -99,36 +99,6 @@ create_sls <- function() {
   )
 
 
-  learners <- c(
-    lrnr_earth_1,
-    lrnr_earth_2,
-    lrnr_earth_3,
-    lrnr_earth_4,
-    lrnr_earth_5,
-    lrnr_earth_6,
-    lrnr_earth_7,
-    lrnr_earth_8,
-    lrnr_earth_9,
-    lrnr_earth_10,
-    lrnr_earth_11
-  )
-
-  names(learners) <- c(
-    "full earth 1",
-    "full earth 2",
-    "full earth 3",
-    "full earth 4",
-    "full earth 5",
-    "full earth 6",
-    "full earth 7",
-    "full earth 8",
-    "full earth 9",
-    "full earth 10",
-    "full earth 11"
-  )
-
-  zeta_learner <- make_learner(Stack, learners)
-
   # Create default mu estimator ---------------------------
 
   lrnr_glm_basic <- Lrnr_glm$new()
@@ -143,13 +113,16 @@ create_sls <- function() {
 
   learners <- c(
     lrnr_glm_basic,
-    # lrnr_ridge,
-    # lrnr_lasso,
+    lrnr_lasso,
     lrnr_ranger_100,
-    lrnr_xgboost_50
+    lrnr_xgboost_50,
     # lrnr_xgboost_100,
     # lrnr_xgboost_200
-    # lrnr_xgboost_300
+    lrnr_earth_1,
+    lrnr_earth_2,
+    lrnr_earth_3,
+    lrnr_earth_5,
+    lrnr_earth_7
   )
 
   mu_learner <- make_learner(Stack, learners)
@@ -187,10 +160,7 @@ create_sls <- function() {
 
   return(list(
     "pi_learner" = pi_learner,
-    "zeta_learner" = zeta_learner,
     "mu_learner" = mu_learner,
-    "e_learner" = e_learner,
-    "g_learner" = g_learner,
-    "quant_learner" = quant_lrnr
+    "g_learner" = g_learner
   ))
 }

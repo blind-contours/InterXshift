@@ -9,7 +9,7 @@ library(InterXshift)
 
 # simulation parameters
 n_sim <- 10 # number of simulations
-n_obs <- c(250, 500, 1000, 1500, 2000, 2500, 3000, 5000) # sample sizes at root-n scale
+n_obs <- c(300, 600, 1000, 2000, 3000, 5000) # sample sizes at root-n scale
 p0_obs <- 100000
 
 # Generate simulated data -----------------
@@ -24,7 +24,6 @@ m3_effect <- full_data$m3_effect
 m4_effect <- full_data$m4_effect
 m1m4_effect <- full_data$m14_effect
 m1m4_intxn <- full_data$m14_intxn
-effect_modification <- full_data$effect_mod
 
 covars <- c("W1", "W2", "W3")
 exposures <- c("M1", "M2", "M3", "M4")
@@ -56,13 +55,13 @@ for (sample_size in n_obs) {
                               a = a,
                               y = y,
                               seed = seed,
-                              true_effects = c(m1_effect, m2_effect, m3_effect, m4_effect),
+                              top_rank_effects = m4_effect,
                               m14_effect_truth = m1m4_effect,
                               m14_intxn_truth = m1m4_intxn,
                               true_em_effects = effect_modification,
                               deltas = list("M1" = 1, "M2" = 1, "M3" = 1, "M4" = 1),
-                              cv_folds = 2,
-                              var_sets = c("M1", "M2", "M3", "M4", "M1M4", "M3W3")
+                              cv_folds = 5,
+                              var_sets = NULL
     )
 
     est_out$n_obs <- sample_size

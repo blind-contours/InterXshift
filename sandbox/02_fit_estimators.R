@@ -2,7 +2,7 @@ fit_estimators <- function(w,
                            a,
                            y,
                            seed,
-                           true_effects,
+                           top_rank_effects,
                            m14_effect_truth,
                            m14_intxn_truth,
                            true_em_effects,
@@ -18,79 +18,43 @@ fit_estimators <- function(w,
     estimator = "tmle",
     fluctuation = "standard",
     n_folds = cv_folds,
-    family = "continuous",
-    quantile_thresh = 0,
-    verbose = TRUE,
+    num_cores = 5,
+    outcome_type = "continuous",
     parallel = TRUE,
     seed = seed,
-    var_sets = var_sets
+    density_classification = TRUE,
+    top_n = 1
   )
 
 
-  indiv_shift_results <- sim_results$`Indiv Shift Results`
-  em_results <- sim_results$`Effect Mod Results`
-  joint_shift_results <- sim_results$`Joint Shift Results`
+  top_rank_pos <- sim_results$`Pos Shift Results by Rank`$`Rank 1`
+  joint_shift_results <- sim_results$`Pooled Synergy Results by Rank`$`Rank 1`
 
   indiv_biases <- vector()
   indiv_coverage <- vector()
   indiv_estimates <- vector()
 
-  for (i in seq(true_effects)) {
-    true_effect <- true_effects[i]
-    exposure_results <- indiv_shift_results[[i]]
-    exposure_results_pooled <- exposure_results[exposure_results$Fold == "Pooled TMLE", ]
-    pooled_exposure_est <- exposure_results_pooled$Psi
-    indiv_biases[[i]] <- true_effect - pooled_exposure_est
-    indiv_coverage[[i]] <- ifelse(
-      (exposure_results_pooled$`Lower CI` <= true_effect &
-         true_effect <= exposure_results_pooled$`Upper CI`), 1, 0
+
+  exposure_results_pooled <- top_rank_pos[top_rank_pos$Fold == "Pooled TMLE", ]
+  pooled_exposure_est <- exposure_results_pooled$Psi
+  indiv_bias <- top_rank_effects - pooled_exposure_est
+  indiv_coverage <- ifelse(
+      (exposure_results_pooled$`Lower CI` <= top_rank_effects &
+         top_rank_effects <= exposure_results_pooled$`Upper CI`), 1, 0
     )
 
-    indiv_estimates[[i]] <- pooled_exposure_est
-  }
+  indiv_estimates <- pooled_exposure_est
+
 
 
   indiv_results <- list(
-    "indiv_est" = mean(indiv_estimates),
-    "indiv_bias" = mean(indiv_biases),
-    "indiv_cov" = mean(indiv_coverage)
+    "indiv_est" = indiv_estimates,
+    "indiv_bias" = indiv_bias,
+    "indiv_cov" = indiv_coverage
   )
 
-
-  M3W3_results <- em_results$M3W3
-  M3W3_pooled <- M3W3_results[M3W3_results$Fold == "Pooled TMLE", ]
-
-  level_1_em_results <- M3W3_pooled[str_detect(M3W3_pooled$Condition, "Level 1"),]
-  level_0_em_results <- M3W3_pooled[str_detect(M3W3_pooled$Condition, "Level 0"),]
-
-  level_1_truth <- true_em_effects[str_detect(names(true_em_effects), "Level 1")]
-  level_0_truth <- true_em_effects[str_detect(names(true_em_effects), "Level 0")]
-
-  est_level_1_bias <- mean(level_1_truth[[1]] - level_1_em_results$Psi)
-  est_level_0_bias <- mean(level_0_truth[[1]] - level_0_em_results$Psi)
-
-  est_biases <- mean(est_level_1_bias, est_level_0_bias)
-
-  level_1_cov <- ifelse(
-    (level_1_em_results$`Lower CI` <= level_1_truth[[1]] &
-       level_1_truth[[1]] <= level_1_em_results$`Upper CI`), 1, 0
-  )
-
-  level_0_cov <- ifelse(
-    (level_0_em_results$`Lower CI` <= level_0_truth[[1]] &
-       level_0_truth[[1]] <= level_0_em_results$`Upper CI`), 1, 0
-  )
-
-  effect_mod_results <- list(
-    "em_bias" = est_biases,
-    "em_est" = mean(M3W3_pooled$Psi),
-    "em_cov" = mean(level_1_cov, level_0_cov)
-  )
-
-  joint_intxn_results <- joint_shift_results$M1M4
-  pooled_tmle_joint_intxn <- joint_intxn_results[joint_intxn_results$Fold == "Pooled TMLE", ]
-  pooled_tmle_joint <- pooled_tmle_joint_intxn[pooled_tmle_joint_intxn$Condition == "M1&M4", ]
-  pooled_tmle_intxn <- pooled_tmle_joint_intxn[pooled_tmle_joint_intxn$Condition == "Psi", ]
+  pooled_tmle_joint <- joint_shift_results[joint_shift_results$Type == "Joint", ]
+  pooled_tmle_intxn <- joint_shift_results[joint_shift_results$Type == "Interaction", ]
 
   intxn_bias <- pooled_tmle_intxn$Psi - m14_intxn_truth
   joint_bias <- pooled_tmle_joint$Psi - m14_effect_truth
@@ -118,7 +82,7 @@ fit_estimators <- function(w,
   )
 
   # bundle estimators in list
-  estimates <- c(indiv_results, effect_mod_results, joint_results, intxn_results)
+  estimates <- c(indiv_results, joint_results, intxn_results)
 
   return(estimates)
 }
